@@ -2,7 +2,7 @@
 #define MAINWIDGET_H
 
 #include <QWidget>
-
+#include <QTreeWidgetItem>
 namespace Ui {
 class MainWidget;
 }
@@ -17,6 +17,16 @@ public:
 
 private:
     Ui::MainWidget *ui;
+
+private slots:\
+    void on_name_lineEdit_textChanged();
+    void on_phoneNumber_lineEdit_textChanged();
+
+    void on_name_pushButton_pressed();
+    void on_phoneNumber_pushButton_pressed();
+
+    void on_test(QTreeWidgetItem* );
+
 };
 
 #endif // MAINWIDGET_H
