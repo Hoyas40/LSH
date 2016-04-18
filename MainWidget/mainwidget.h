@@ -27,6 +27,10 @@ private slots:\
 
     void on_test(QTreeWidgetItem* );
 
+
+private:
+    void TestInit();
+
 };
 
 #endif // MAINWIDGET_H
