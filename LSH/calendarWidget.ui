@@ -58,14 +58,26 @@
          <item>
           <widget class="QPushButton" name="pushbutton_calendar_prev_year">
            <property name="text">
-            <string>PushButton</string>
+            <string/>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>50</width>
+             <height>50</height>
+            </size>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="pushbutton_calendar_prev_month">
            <property name="text">
-            <string>PushButton</string>
+            <string/>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>50</width>
+             <height>50</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -119,15 +131,39 @@
          </item>
          <item>
           <widget class="QPushButton" name="pushbutton_calendar_next_month">
+           <property name="minimumSize">
+            <size>
+             <width>50</width>
+             <height>50</height>
+            </size>
+           </property>
            <property name="text">
-            <string>PushButton</string>
+            <string/>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>50</width>
+             <height>50</height>
+            </size>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="pushbutton_calendar_next_year">
+           <property name="minimumSize">
+            <size>
+             <width>50</width>
+             <height>50</height>
+            </size>
+           </property>
            <property name="text">
-            <string>PushButton</string>
+            <string/>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>50</width>
+             <height>50</height>
+            </size>
            </property>
           </widget>
          </item>

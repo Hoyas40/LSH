@@ -23,3 +23,6 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui \
     calendarWidget.ui
+
+RESOURCES += \
+    rsc.qrc

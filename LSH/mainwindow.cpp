@@ -12,6 +12,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_calendarWidget = new CalendarWidget;
 
+    //MainWindow::setWindowState(Qt::WindowMaximized);
+    this->setWindowState( Qt::WindowMaximized );
     setCentralWidget( m_calendarWidget );
 }
 

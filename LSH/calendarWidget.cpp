@@ -29,6 +29,36 @@ CalendarWidget::CalendarWidget(QWidget *parent) :
 
     for( int i = 0; i < NUM_TOTAL_CALENDAR_ELEMENT; ++i )
         connect( m_calendarBody[i], SIGNAL(buttonReleased()), this, SLOT(onDateClicked()));
+
+
+    QPixmap pixNextMonth(":/images/arrow_next_month.png");
+    QIcon iconNextMonth( pixNextMonth );
+    ui->pushbutton_calendar_next_month->setIcon( iconNextMonth );
+    ui->pushbutton_calendar_next_month->setIconSize( ui->pushbutton_calendar_next_month->iconSize() );
+    ui->pushbutton_calendar_next_month->setStyleSheet("QPushButton{border: none;outline: none;}");
+
+
+    QPixmap pixNextYear("D:/Dev/Qt/LSH/LSH/arrow_next_year.png");
+    QIcon iconNextYear( pixNextYear );
+    ui->pushbutton_calendar_next_year->setIcon( iconNextYear );
+    ui->pushbutton_calendar_next_year->setIconSize( ui->pushbutton_calendar_next_year->iconSize() );
+    ui->pushbutton_calendar_next_year->setStyleSheet("QPushButton{border: none;outline: none;}");
+
+    QPixmap pixPrevMonth(":/images/arrow_prev_month.png");
+    QIcon iconPrevMonth( pixPrevMonth );
+    ui->pushbutton_calendar_prev_month->setIcon( iconPrevMonth );
+    ui->pushbutton_calendar_prev_month->setIconSize( ui->pushbutton_calendar_prev_month->iconSize() );
+    ui->pushbutton_calendar_prev_month->setStyleSheet("QPushButton{border: none;outline: none;}");
+
+
+    QPixmap pixPrevYear("D:/Dev/Qt/LSH/LSH/arrow_prev_year.png");
+    QIcon iconPrevYear( pixPrevYear );
+    ui->pushbutton_calendar_prev_year->setIcon( iconPrevYear );
+    ui->pushbutton_calendar_prev_year->setIconSize( ui->pushbutton_calendar_prev_year->iconSize() );
+    ui->pushbutton_calendar_prev_year->setStyleSheet("QPushButton{border: none;outline: none;}");
+
+
+
 }
 
 CalendarWidget::~CalendarWidget()
