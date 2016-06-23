@@ -7,6 +7,8 @@ namespace Ui {
 class MainWindow;
 }
 
+class CalendarWidget;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -17,6 +19,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    CalendarWidget * m_calendarWidget;
+
 };
 
 #endif // MAINWINDOW_H

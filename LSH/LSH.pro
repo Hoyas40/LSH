@@ -13,8 +13,13 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    calendarWidget.cpp \
+    my_qlabel.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    calendarWidget.h \
+    my_qlabel.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    calendarWidget.ui
