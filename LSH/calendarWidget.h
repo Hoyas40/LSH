@@ -39,8 +39,7 @@ private slots:
     void onDateClicked();
 private:
     void Initialize();
-    void UpdateCalendar();
-    QString GetNameOfDay( int i );
+    void UpdateCalendar();    
     void UpdateMainDate();
 
     void UpdateSchedule();
@@ -50,6 +49,8 @@ private:
     // when a date is selected from calendar
     // request data to DB and show schedules of the selected day
     void UpdateScheduleWidget();
+
+    QString GetNameOfDay( int i );
 
 };
 

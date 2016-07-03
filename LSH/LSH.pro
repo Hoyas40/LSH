@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -15,14 +15,26 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     calendarWidget.cpp \
-    my_qlabel.cpp
+    my_qlabel.cpp \
+    dbmanager.cpp \
+    editdbtabledialog.cpp \
+    insertsubtabledialog.cpp \
+    clientdialog.cpp
 
 HEADERS  += mainwindow.h \
     calendarWidget.h \
-    my_qlabel.h
+    my_qlabel.h \
+    dbmanager.h \
+    databasetable.h \
+    editdbtabledialog.h \
+    insertsubtabledialog.h \
+    clientdialog.h
 
 FORMS    += mainwindow.ui \
-    calendarWidget.ui
+    calendarWidget.ui \
+    editdbtabledialog.ui \
+    insertsubtabledialog.ui \
+    clientdialog.ui
 
 RESOURCES += \
     rsc.qrc

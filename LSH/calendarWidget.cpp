@@ -22,7 +22,7 @@ CalendarWidget::CalendarWidget(QWidget *parent) :
     connect( ui->pushbutton_calendar_next_month, SIGNAL(clicked(bool)), this, SLOT(onCalendarNextMonthButtonPressed()));
     connect( ui->pushbutton_calendar_next_year, SIGNAL(clicked(bool)), this, SLOT(onCalendarNextYearButtonPressed()) );
 
-    connect( ui->pushButton_new, SIGNAL(clicked(bool)), this, SLOT(onReturnToCurrentMonth()));    
+    connect( ui->pushButton_new, SIGNAL(clicked(bool)), this, SLOT(onReturnToCurrentMonth()));
 
     // Initialize
     Initialize();
@@ -275,7 +275,7 @@ void CalendarWidget::UpdateSchedule()
 
 void CalendarWidget::UpdateScheduleDate()
 {
-    QString text = QString::number( m_calendarSelectedDate.year() )  + QString::fromLocal8Bit("년 ") +
+    QString text = QString::number( m_calendarSelectedDate.year() )  + QString::fromLocal8Bit("연 ") +
                    QString::number( m_calendarSelectedDate.month() ) + QString::fromLocal8Bit("월 ") +
                    QString::number( m_calendarSelectedDate.day() ) + QString::fromLocal8Bit("일");
 
