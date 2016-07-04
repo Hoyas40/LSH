@@ -169,9 +169,6 @@ void MainWindow::AddClient()
     {
         qDebug() << "accepted";
     }
-
-
-
 }
 
 void MainWindow::AddOperation()

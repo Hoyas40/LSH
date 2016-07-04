@@ -31,6 +31,10 @@ public:
 
     static QString GetTagName( ENUM_DB_TABLES _table );
 
+    void InsertClient( const QString& _name, const QString& _phoneNumber, const QString& _contactWay,
+                       const QString& _hairLength, const QString& hairNumber, const QString& _hairSag, const QString& _hairDamage );
+
+
 
 
 

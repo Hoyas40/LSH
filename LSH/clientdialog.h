@@ -24,10 +24,14 @@ public:
 
     void SetRole( CLIENT_ROLE _role );
 
+    void SetClientId( const int _id );
+
 private slots:
     void on_pushButton_OK_clicked();
 
     void on_pushButton_Cancel_clicked();
+
+    void on_lienEdit_Text_Changed( const QString & _str );
 
 private:
     void InitNew();
@@ -37,14 +41,14 @@ private:
     void LoadDB();
 
 
-
-
 private:
     Ui::ClientDialog *ui;
 
     DBManager * m_dbManager;
 
     CLIENT_ROLE m_role;
+
+    int m_clientId;
 
 };
 

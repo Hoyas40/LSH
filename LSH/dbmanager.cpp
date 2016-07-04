@@ -1,4 +1,5 @@
 #include "dbmanager.h"
+#include <algorithm>
 
 #include <QTextCodec>
 #include <QDir>
@@ -203,13 +204,64 @@ QString DBManager::GetTagName(ENUM_DB_TABLES _table)
     }
 }
 
+void DBManager::InsertClient(const QString &_name, const QString &_phoneNumber, const QString &_contactWay, const QString &_hairLength, const QString &_hairNumber, const QString &_hairSag, const QString &_hairDamage)
+{
+    // get new ID;
+
+
+    QSqlQuery query;
+    QString queryStr = QString( "SELECT %1 FROM %2" ).arg( m_dbTableClient.id.name ).arg( m_dbTableClient.tableName );
+    query.prepare( queryStr );
+    query.exec();
+
+    int ID = -1;
+
+    while( query.next() )
+    {
+        int tmpID = query.value(0).toInt();
+
+        ID = std::max( ID, tmpID );
+    }
+
+    ID++;
+
+    queryStr = QString("INSERT INTO %1 VALUES( %2, '%3', '%4', '%5', '%6', '%7', '%8', '%9' )").arg( m_dbTableClient.tableName )
+            .arg( ID )
+            .arg( _name  )
+            .arg( _phoneNumber )
+            .arg( _contactWay )
+            .arg( _hairLength )
+            .arg( _hairNumber )
+            .arg( _hairSag )
+            .arg( _hairDamage );
+
+
+    query.prepare( queryStr );
+    query.exec();
+
+    queryStr = QString( "SELECT * FROM %1" ).arg( m_dbTableClient.tableName );
+    query.prepare( queryStr );
+    query.exec();
+
+//    while( query.next() )
+//    {
+//        QString tmp;
+//        for( int i = 0; i < query.record().count(); ++i )
+//        {
+//            tmp += query.value(i).toString() + " | ";
+//        }
+
+//        qDebug() << tmp;
+//    }
+}
+
 
 
 void DBManager::InitDbTables()
 {
     // client table
     m_dbTableClient.tableName   = QString( "CLIENT" );
-    m_dbTableClient.id          = DB_TABLE_ITEM( "CLIENT_ID",           "INTEGER",     "PRIMARY KEY AUTOINCREMENT NOT NULL" );
+    m_dbTableClient.id          = DB_TABLE_ITEM( "CLIENT_ID",           "INTEGER",     "PRIMARY KEY NOT NULL" );
     m_dbTableClient.name        = DB_TABLE_ITEM( "CLIENT_NAME",         "VARCHAR(20)", "NOT NULL" );
     m_dbTableClient.phoneNumber = DB_TABLE_ITEM( "CLIENT_PHONE_NUMBER", "VARCHAR(15)", "NOT NULL" );
     m_dbTableClient.contactWay  = DB_TABLE_ITEM( "CLIENT_CONTACY_WAY",  "VARCHAR(10)" );
@@ -221,7 +273,7 @@ void DBManager::InitDbTables()
 
     // operation table
     m_dbTableOperation.tableName = QString( "OPERATION" );
-    m_dbTableOperation.id        = DB_TABLE_ITEM( "OP_ID",       "INTEGER",      "PRIMARY KEY AUTOINCREMENT NOT NULL");
+    m_dbTableOperation.id        = DB_TABLE_ITEM( "OP_ID",       "INTEGER",      "PRIMARY KEY NOT NULL");
     m_dbTableOperation.clientId  = DB_TABLE_ITEM( "CLIENT_ID",   "INTEGER",      "NOT NULL" );
     m_dbTableOperation.dateTime  = DB_TABLE_ITEM( "OP_DATETIME", "TEXT",         "NOT NULL" );
     m_dbTableOperation.curl      = DB_TABLE_ITEM( "OP_CURL",     "VARCHAR(10)" );

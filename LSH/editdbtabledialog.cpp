@@ -2,6 +2,8 @@
 #include "ui_editdbtabledialog.h"
 #include "insertsubtabledialog.h"
 
+#include <QMessageBox>
+
 #include <QDebug>
 
 
@@ -84,6 +86,8 @@ void EditDbTableDialog::on_radioButton_contact_clicked()
 
 void EditDbTableDialog::UpdateView()
 {
+    qDebug() << __FUNCTION__;
+
     ui->treeWidget->clear();
 
     if( m_dbManager != nullptr )
@@ -106,11 +110,9 @@ void EditDbTableDialog::UpdateView()
                 ui->treeWidget->addTopLevelItem( item );
             }
         }
-
-
     }
 
-    qDebug() << __FUNCTION__;
+
 }
 
 void EditDbTableDialog::on_pushButton_add_clicked()
@@ -120,6 +122,7 @@ void EditDbTableDialog::on_pushButton_add_clicked()
     if( m_selectedTable == TABLE_NONE )
     {
         // show warning message
+        QMessageBox::warning( this, QString::fromLocal8Bit("에러"), QString::fromLocal8Bit("먼저 테이블을 선택하세요!") );
         return;
     }
 
@@ -163,27 +166,31 @@ void EditDbTableDialog::on_pushButton_delete_clicked()
     if( m_selectedTable == TABLE_NONE )
     {
         // show warning message
+        QMessageBox::warning( this, QString::fromLocal8Bit("에러"), QString::fromLocal8Bit("먼저 테이블을 선택하세요!") );
         return;
-    }
-
-
-    // Important
-    // warning message to indicate that deleting an item
-    // is CRITICAL
+    }   
 
     QTreeWidgetItem * item = ui->treeWidget->currentItem();
     if( item != nullptr )
     {
+        int but =  QMessageBox::warning( this, QString::fromLocal8Bit("중요!!!!!!"), QString::fromLocal8Bit("데이터베이스의 참조 항목을 삭제하면\n해당 항목이 제대로 표시되지 않을 수 있습니다.\n삭제보다는 편집이나 새로운 항목을 추가하는 것을\n추천합니다!\n그래도 삭제하시겠습니까?"), QMessageBox::Ok | QMessageBox::Cancel );
+        if( but == QMessageBox::Cancel )
+            return;
+
         qDebug() << ui->treeWidget->currentItem()->text( 0 );
         QString id = item->text( 0 );
 
         if( false == id.isEmpty() )
             m_dbManager->DeleteSubTable( m_selectedTable, id );
     }
+    else
+    {
+        QMessageBox::warning( this, QString::fromLocal8Bit("에러"), QString::fromLocal8Bit("삭제할 아이템을 선택하세요!") );
+        return;
+    }
+
+
     UpdateView();
-
-
-
 }
 
 void EditDbTableDialog::on_pushButton_edit_clicked()
@@ -193,13 +200,9 @@ void EditDbTableDialog::on_pushButton_edit_clicked()
     if( m_selectedTable == TABLE_NONE )
     {
         // show warning message
+        QMessageBox::warning( this, QString::fromLocal8Bit("에러"), QString::fromLocal8Bit("먼저 테이블을 선택하세요!") );
         return;
     }
-
-
-    // Important
-    // warning message to indicate that deleting an item
-    // is CRITICAL
 
     QTreeWidgetItem * item = ui->treeWidget->currentItem();
     if( item != nullptr )
@@ -220,6 +223,11 @@ void EditDbTableDialog::on_pushButton_edit_clicked()
             }
 
         }
+    }
+    else
+    {
+        QMessageBox::warning( this, QString::fromLocal8Bit("에러"), QString::fromLocal8Bit("편집할 아이템을 선택하세요!") );
+        return;
     }
     UpdateView();
 }
