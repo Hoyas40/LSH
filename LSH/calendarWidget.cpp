@@ -7,9 +7,10 @@
 
 
 
-CalendarWidget::CalendarWidget(QWidget *parent) :
+CalendarWidget::CalendarWidget(QWidget *parent,DBManager* _dbManager) :
     QWidget(parent),
     ui(new Ui::Widget)
+  , m_dbManager( _dbManager )
 {
     ui->setupUi(this);
 
@@ -27,35 +28,7 @@ CalendarWidget::CalendarWidget(QWidget *parent) :
     // Initialize
     Initialize();
 
-    for( int i = 0; i < NUM_TOTAL_CALENDAR_ELEMENT; ++i )
-        connect( m_calendarBody[i], SIGNAL(buttonReleased()), this, SLOT(onDateClicked()));
 
-
-    QPixmap pixNextMonth(":/images/arrow_next_month.png");
-    QIcon iconNextMonth( pixNextMonth );
-    ui->pushbutton_calendar_next_month->setIcon( iconNextMonth );
-    ui->pushbutton_calendar_next_month->setIconSize( ui->pushbutton_calendar_next_month->iconSize() );
-    ui->pushbutton_calendar_next_month->setStyleSheet("QPushButton{border: none;outline: none;}");
-
-
-    QPixmap pixNextYear("D:/Dev/Qt/LSH/LSH/arrow_next_year.png");
-    QIcon iconNextYear( pixNextYear );
-    ui->pushbutton_calendar_next_year->setIcon( iconNextYear );
-    ui->pushbutton_calendar_next_year->setIconSize( ui->pushbutton_calendar_next_year->iconSize() );
-    ui->pushbutton_calendar_next_year->setStyleSheet("QPushButton{border: none;outline: none;}");
-
-    QPixmap pixPrevMonth(":/images/arrow_prev_month.png");
-    QIcon iconPrevMonth( pixPrevMonth );
-    ui->pushbutton_calendar_prev_month->setIcon( iconPrevMonth );
-    ui->pushbutton_calendar_prev_month->setIconSize( ui->pushbutton_calendar_prev_month->iconSize() );
-    ui->pushbutton_calendar_prev_month->setStyleSheet("QPushButton{border: none;outline: none;}");
-
-
-    QPixmap pixPrevYear("D:/Dev/Qt/LSH/LSH/arrow_prev_year.png");
-    QIcon iconPrevYear( pixPrevYear );
-    ui->pushbutton_calendar_prev_year->setIcon( iconPrevYear );
-    ui->pushbutton_calendar_prev_year->setIconSize( ui->pushbutton_calendar_prev_year->iconSize() );
-    ui->pushbutton_calendar_prev_year->setStyleSheet("QPushButton{border: none;outline: none;}");
 
 
 
@@ -66,12 +39,21 @@ CalendarWidget::~CalendarWidget()
     delete ui;
 }
 
+void CalendarWidget::SetDbManager(DBManager *_dbManager)
+{
+    m_dbManager = _dbManager;
+}
+
+
+
 void CalendarWidget::onCalendarPrevMonthButtonPressed()
 {
     m_calendarDate = m_calendarDate.addMonths( -1 );
 
     UpdateCalendar();
 }
+
+
 
 void CalendarWidget::onCalendarNextMonthButtonPressed()
 {
@@ -80,6 +62,8 @@ void CalendarWidget::onCalendarNextMonthButtonPressed()
     UpdateCalendar();
 }
 
+
+
 void CalendarWidget::onCalendarPrevYearButtonPressed()
 {
     m_calendarDate = m_calendarDate.addYears( -1 );
@@ -87,12 +71,16 @@ void CalendarWidget::onCalendarPrevYearButtonPressed()
     UpdateCalendar();
 }
 
+
+
 void CalendarWidget::onCalendarNextYearButtonPressed()
 {
     m_calendarDate = m_calendarDate.addYears( 1 );
 
     UpdateCalendar();
 }
+
+
 
 void CalendarWidget::Initialize()
 {
@@ -147,12 +135,45 @@ void CalendarWidget::Initialize()
 //        m_calendarBody[i]->setPalette( palette );
     }
 
+    for( int i = 0; i < NUM_TOTAL_CALENDAR_ELEMENT; ++i )
+        connect( m_calendarBody[i], SIGNAL(buttonReleased()), this, SLOT(onDateClicked()));
+
+
+    QPixmap pixNextMonth(":/images/arrow_next_month.png");
+    QIcon iconNextMonth( pixNextMonth );
+    ui->pushbutton_calendar_next_month->setIcon( iconNextMonth );
+    ui->pushbutton_calendar_next_month->setIconSize( ui->pushbutton_calendar_next_month->iconSize() );
+    ui->pushbutton_calendar_next_month->setStyleSheet("QPushButton{border: none;outline: none;}");
+
+
+    QPixmap pixNextYear("D:/Dev/Qt/LSH/LSH/arrow_next_year.png");
+    QIcon iconNextYear( pixNextYear );
+    ui->pushbutton_calendar_next_year->setIcon( iconNextYear );
+    ui->pushbutton_calendar_next_year->setIconSize( ui->pushbutton_calendar_next_year->iconSize() );
+    ui->pushbutton_calendar_next_year->setStyleSheet("QPushButton{border: none;outline: none;}");
+
+    QPixmap pixPrevMonth(":/images/arrow_prev_month.png");
+    QIcon iconPrevMonth( pixPrevMonth );
+    ui->pushbutton_calendar_prev_month->setIcon( iconPrevMonth );
+    ui->pushbutton_calendar_prev_month->setIconSize( ui->pushbutton_calendar_prev_month->iconSize() );
+    ui->pushbutton_calendar_prev_month->setStyleSheet("QPushButton{border: none;outline: none;}");
+
+
+    QPixmap pixPrevYear("D:/Dev/Qt/LSH/LSH/arrow_prev_year.png");
+    QIcon iconPrevYear( pixPrevYear );
+    ui->pushbutton_calendar_prev_year->setIcon( iconPrevYear );
+    ui->pushbutton_calendar_prev_year->setIconSize( ui->pushbutton_calendar_prev_year->iconSize() );
+    ui->pushbutton_calendar_prev_year->setStyleSheet("QPushButton{border: none;outline: none;}");
+
+
     UpdateCalendar();
     UpdateSchedule();
 }
 
 void CalendarWidget::UpdateCalendar()
 {
+    qDebug() << __FUNCTION__;
+
     m_calendarDayOffset = m_calendarDate.dayOfWeek();
 
 
@@ -202,12 +223,15 @@ void CalendarWidget::UpdateCalendar()
         }
     }
 
+    // write text of day in calendar title widgets
     for( int i = 0; i < lastDayOfMonth; ++i )
     {
         int realIndex = i + m_calendarDayOffset;
         m_calendarTitle[ realIndex ]->setText( QString::number(i + 1) + "  (" + m_calendarTitle[ realIndex ]->text() + ")" );
     }
 
+
+    // disable calendar item, for date < 1st day of month
     for( int i = 0; i < m_calendarDayOffset; ++i )
     {
         m_calendarTitle[ i ]->clear();
@@ -216,6 +240,7 @@ void CalendarWidget::UpdateCalendar()
     }
 
 
+    // disable calendar item, for date > last day of month
     for( int i = lastDayOfMonth; i + m_calendarDayOffset < NUM_TOTAL_CALENDAR_ELEMENT; ++i )
     {
         int realIndex = i + m_calendarDayOffset;
@@ -224,6 +249,33 @@ void CalendarWidget::UpdateCalendar()
         m_calendarTitle[ realIndex ]->setEnabled( false );
         m_calendarBody[ realIndex ]->setEnabled( false );
     }
+
+
+    if( m_dbManager != nullptr )
+    {
+        QString firstTime = QString( "%1-%2-%3 %4:%5")
+                .arg( m_calendarDate.year() )
+                .arg( m_calendarDate.month(),2, 10, QChar('0') )
+                .arg( 1, 2, 10, QChar('0') )
+                .arg( 8, 2, 10, QChar('0') )
+                .arg( 0, 2, 10, QChar('0') );
+
+        QString lastTime = QString( "%1-%2-%3 %4:%5")
+                .arg( m_calendarDate.year() )
+                .arg( m_calendarDate.month(),2, 10, QChar('0') )
+                .arg( m_calendarDate.daysInMonth(), 2, 10, QChar('0') )
+                .arg( 23, 2, 10, QChar('0') )
+                .arg( 0, 2, 10, QChar('0') );
+
+        QStringList queryResultList = m_dbManager->SelectOperationBetweenTwoDates(firstTime, lastTime);
+
+        foreach( const QString& str, queryResultList )
+        {
+            qDebug() << str;
+        }
+    }
+
+
 }
 
 QString CalendarWidget::GetNameOfDay( int i )
@@ -258,6 +310,8 @@ QString CalendarWidget::GetNameOfDay( int i )
     }
 }
 
+
+
 void CalendarWidget::UpdateMainDate()
 {
     QString text = QString::number( m_calendarDate.year() )  + QString::fromLocal8Bit("년 ") +
@@ -266,6 +320,8 @@ void CalendarWidget::UpdateMainDate()
     ui->label_main_date->setText( text );
 }
 
+
+
 void CalendarWidget::UpdateSchedule()
 {
     ColorizeSelectedDay();
@@ -273,20 +329,26 @@ void CalendarWidget::UpdateSchedule()
     UpdateScheduleWidget();
 }
 
+
+
 void CalendarWidget::UpdateScheduleDate()
 {
-    QString text = QString::number( m_calendarSelectedDate.year() )  + QString::fromLocal8Bit("연 ") +
+    QString text = QString::number( m_calendarSelectedDate.year() )  + QString::fromLocal8Bit("년 ") +
                    QString::number( m_calendarSelectedDate.month() ) + QString::fromLocal8Bit("월 ") +
                    QString::number( m_calendarSelectedDate.day() ) + QString::fromLocal8Bit("일");
 
     ui->label_schedule_date->setText( text );
 }
 
+
+
 void CalendarWidget::onReturnToCurrentMonth()
 {
     m_calendarDate  = QDate( m_calendarToday.year(), m_calendarToday.month(), 1 );
     UpdateCalendar();
 }
+
+
 
 void CalendarWidget::onDateClicked()
 {
@@ -339,5 +401,31 @@ void CalendarWidget::ColorizeSelectedDay()
 
 void CalendarWidget::UpdateScheduleWidget()
 {
+    qDebug() << __FUNCTION__;
     UpdateScheduleDate();
+
+    if( m_dbManager != nullptr )
+    {
+        QString firstTime = QString( "%1-%2-%3 %4:%5")
+                .arg( m_calendarSelectedDate.year() )
+                .arg( m_calendarSelectedDate.month(),2, 10, QChar('0') )
+                .arg( m_calendarSelectedDate.day(), 2, 10, QChar('0') )
+                .arg( 8, 2, 10, QChar('0') )
+                .arg( 0, 2, 10, QChar('0') );
+
+        QString lastTime = QString( "%1-%2-%3 %4:%5")
+                .arg( m_calendarSelectedDate.year() )
+                .arg( m_calendarSelectedDate.month(),2, 10, QChar('0') )
+                .arg( m_calendarSelectedDate.day(), 2, 10, QChar('0') )
+                .arg( 23, 2, 10, QChar('0') )
+                .arg( 0, 2, 10, QChar('0') );
+
+        QStringList queryResultList = m_dbManager->SelectOperationBetweenTwoDates(firstTime, lastTime);
+
+        foreach( const QString& str, queryResultList )
+        {
+            qDebug() << str;
+        }
+    }
+
 }

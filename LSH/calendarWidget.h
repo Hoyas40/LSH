@@ -5,6 +5,8 @@
 #include <QLabel>
 #include <QDate>
 
+#include "dbmanager.h"
+
 namespace Ui {
 class Widget;
 }
@@ -14,8 +16,10 @@ class CalendarWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit CalendarWidget(QWidget *parent = 0);
+    explicit CalendarWidget(QWidget *parent = 0, DBManager* _dbManager = nullptr );
     ~CalendarWidget();
+
+    void SetDbManager( DBManager* _dbManager );
 
 private:
     Ui::Widget *ui;
@@ -51,6 +55,9 @@ private:
     void UpdateScheduleWidget();
 
     QString GetNameOfDay( int i );
+
+private:
+    DBManager * m_dbManager;
 
 };
 

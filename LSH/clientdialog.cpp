@@ -48,27 +48,31 @@ void ClientDialog::LoadDB()
     if( m_dbManager != nullptr )
     {
         QStringList list;
-        list = m_dbManager->SelectAllSubTable( TABLE_LENGTH );
 
-        foreach( const QString& str, list )
-        {
-            QStringList split = str.split( ':' );
 
-            if( 2 == split.count() )
-                ui->comboBox_length->addItem( split[1], split[0] );
-        }
+//        list = m_dbManager->SelectAllSubTable( TABLE_LENGTH );
 
-        // 2. 속눈썹 숱
-        list = m_dbManager->SelectAllSubTable( TABLE_NUMBER );
+//        foreach( const QString& str, list )
+//        {
+//            QStringList split = str.split( ':' );
 
-        foreach( const QString& str, list )
-        {
-            QStringList split = str.split( ':' );
+//            if( 2 == split.count() )
+//                ui->comboBox_length->addItem( split[1], split[0] );
+//        }
 
-            if( 2 == split.count() )
-                ui->comboBox_number->addItem( split[1], split[0] );
-        }
-        // 3. 방문 경로
+//        // 2. number
+//        list = m_dbManager->SelectAllSubTable( TABLE_NUMBER );
+
+//        foreach( const QString& str, list )
+//        {
+//            QStringList split = str.split( ':' );
+
+//            if( 2 == split.count() )
+//                ui->comboBox_number->addItem( split[1], split[0] );
+//        }
+
+
+        // 3. contact way
         list = m_dbManager->SelectAllSubTable( TABLE_CONTACT );
 
         foreach( const QString& str, list )
@@ -94,9 +98,9 @@ void ClientDialog::Init()
 
 
 
-    ui->comboBox_length->addItem( " 10 mm ");
-    ui->comboBox_length->setMinimumSize( ui->comboBox_length->sizeHint() );
-    ui->comboBox_length->clear();
+//    ui->comboBox_length->addItem( " 10 mm ");
+//    ui->comboBox_length->setMinimumSize( ui->comboBox_length->sizeHint() );
+//    ui->comboBox_length->clear();
 
     LoadDB();
 
@@ -121,13 +125,16 @@ void ClientDialog::on_pushButton_OK_clicked()
     QString name = ui->lineEdit_name->text();
     QString phoneNumber = ui->lineEdit_phoneNumber->text();
     QString contactWay = ui->comboBox_contact->currentData().toString();
-    QString hairLength = ui->comboBox_length->currentData().toString();
-    QString hairNumber = ui->comboBox_number->currentData().toString();
+    QString info = ui->lineEdit_info->text();
 
-    QString hairSag = ui->lineEdit_sag->text();
-    QString hairDamage = ui->lineEdit_damage->text();
+//    QString hairLength = ui->comboBox_length->currentData().toString();
+//    QString hairNumber = ui->comboBox_number->currentData().toString();
 
-    qDebug() << contactWay << " : " << hairLength << " : " << hairNumber << " : " << hairSag << " : " << hairDamage;
+//    QString hairSag = ui->lineEdit_sag->text();
+//    QString hairDamage = ui->lineEdit_damage->text();
+
+
+    qDebug() << contactWay <<  info;
 
     if( name.isEmpty() )
     {
@@ -148,8 +155,15 @@ void ClientDialog::on_pushButton_OK_clicked()
         return;
     }
 
+    QStringList checkIfExsitList = m_dbManager->SelectClientWithPhoneNumber( phoneNumber );
+    if( checkIfExsitList.size() != 0 )
+    {
+        QMessageBox::warning( this, QString::fromLocal8Bit("에러"), QString::fromLocal8Bit("이미 있는 전화 번호입니다.") );
+        return;
+    }
 
-    m_dbManager->InsertClient( name, phoneNumber, contactWay, hairLength, hairNumber, hairSag, hairDamage );
+
+    m_dbManager->InsertClient( name, phoneNumber, contactWay, info );
 
 
     accept();

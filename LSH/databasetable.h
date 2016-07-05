@@ -34,10 +34,10 @@ struct DB_TABLE_CLIENT
     DB_TABLE_ITEM name;
     DB_TABLE_ITEM phoneNumber;
     DB_TABLE_ITEM contactWay;
-    DB_TABLE_ITEM hairLength;
-    DB_TABLE_ITEM hairNumber;
-    DB_TABLE_ITEM hairSag;
-    DB_TABLE_ITEM hairDamage;
+//    DB_TABLE_ITEM hairLength;
+//    DB_TABLE_ITEM hairNumber;
+//    DB_TABLE_ITEM hairSag;
+    DB_TABLE_ITEM info;
 };
 
 struct DB_TABLE_OPERATION
@@ -51,7 +51,7 @@ struct DB_TABLE_OPERATION
     DB_TABLE_ITEM color;
     DB_TABLE_ITEM length;
     DB_TABLE_ITEM number;
-    DB_TABLE_ITEM style;
+    //DB_TABLE_ITEM style;
     DB_TABLE_ITEM price;
     DB_TABLE_ITEM shown;
 };

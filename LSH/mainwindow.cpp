@@ -7,6 +7,7 @@
 #include "dbmanager.h"
 #include "editdbtabledialog.h"
 #include "clientdialog.h"
+#include "operationdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -16,17 +17,20 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_calendarWidget = new CalendarWidget;
+
 
     m_dbManager = new DBManager;
 
+
+
     //MainWindow::setWindowState(Qt::WindowMaximized);
-    this->setWindowState( Qt::WindowMaximized );
-    setCentralWidget( m_calendarWidget );
+
 
     CreateActions();
     CreateMenus();
     CreateToolbars();
+
+
 
     setWindowTitle( "LSH Beauty" );
 
@@ -41,10 +45,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_dbManager->Init();
 
+    m_calendarWidget = new CalendarWidget( this, m_dbManager );
+    m_calendarWidget->SetDbManager( m_dbManager );
+
+    this->setWindowState( Qt::WindowMaximized );
+    setCentralWidget( m_calendarWidget );
+
 }
 
 MainWindow::~MainWindow()
 {
+    if( m_dbManager != nullptr )
+        delete m_dbManager;
+
     delete ui;
 }
 
@@ -174,6 +187,17 @@ void MainWindow::AddClient()
 void MainWindow::AddOperation()
 {
     qDebug() << __FUNCTION__;
+
+    OperationDialog diag;
+    diag.SetDbManager( m_dbManager );
+    diag.SetRole( OperationDialog::OPERATION_DIALOG_NEW );
+    diag.Init();
+
+    if( diag.exec() == QDialog::Accepted )
+    {
+        qDebug() << "accepted";
+    }
+
 
 }
 

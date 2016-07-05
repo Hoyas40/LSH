@@ -204,7 +204,7 @@ QString DBManager::GetTagName(ENUM_DB_TABLES _table)
     }
 }
 
-void DBManager::InsertClient(const QString &_name, const QString &_phoneNumber, const QString &_contactWay, const QString &_hairLength, const QString &_hairNumber, const QString &_hairSag, const QString &_hairDamage)
+void DBManager::InsertClient(const QString &_name, const QString &_phoneNumber, const QString &_contactWay, const QString &_info)
 {
     // get new ID;
 
@@ -225,23 +225,83 @@ void DBManager::InsertClient(const QString &_name, const QString &_phoneNumber, 
 
     ID++;
 
-    queryStr = QString("INSERT INTO %1 VALUES( %2, '%3', '%4', '%5', '%6', '%7', '%8', '%9' )").arg( m_dbTableClient.tableName )
+    qDebug() << ID;
+    queryStr = QString("INSERT INTO %1 VALUES( %2, '%3', '%4', '%5', '%6' )").arg( m_dbTableClient.tableName )
             .arg( ID )
             .arg( _name  )
             .arg( _phoneNumber )
             .arg( _contactWay )
-            .arg( _hairLength )
-            .arg( _hairNumber )
-            .arg( _hairSag )
-            .arg( _hairDamage );
+            .arg( _info );
 
 
     query.prepare( queryStr );
     query.exec();
 
-    queryStr = QString( "SELECT * FROM %1" ).arg( m_dbTableClient.tableName );
+
+
+    // To verify if insertion is good!
+
+//    queryStr = QString( "SELECT * FROM %1" ).arg( m_dbTableClient.tableName );
+//    query.prepare( queryStr );
+//    query.exec();
+
+//    while( query.next() )
+//    {
+//        QString tmp;
+//        for( int i = 0; i < query.record().count(); ++i )
+//        {
+//            tmp += query.value(i).toString() + " | ";
+//        }
+
+//        qDebug() << tmp;
+    //    }
+}
+
+void DBManager::InsertOperation(const QString &_clientID, const QString &_dateTime, const QString &_curl, const QString &_type, const QString &_color,
+                                const QString &_length, const QString &_number, const QString &_price)
+{
+    QSqlQuery query;
+    QString queryStr = QString( "SELECT %1 FROM %2" ).arg( m_dbTableOperation.id.name ).arg( m_dbTableOperation.tableName );
     query.prepare( queryStr );
     query.exec();
+
+    int ID = -1;
+
+    while( query.next() )
+    {
+        int tmpID = query.value(0).toInt();
+
+        ID = std::max( ID, tmpID );
+    }
+
+    ID++;
+
+
+    qDebug() << ID;
+    queryStr = QString("INSERT INTO %1 VALUES( %2, %3, '%4', '%5', '%6', '%7', '%8', '%9', %10, %11 )").arg( m_dbTableOperation.tableName )
+            .arg( ID )
+            .arg( _clientID.toInt()  )
+            .arg( _dateTime )
+            .arg( _curl )
+            .arg( _type )
+            .arg( _color )
+            .arg( _length )
+            .arg( _number )
+            .arg( _price )
+            .arg( 0 );
+
+    qDebug() << queryStr;
+
+    query.prepare( queryStr );
+    query.exec();
+
+
+    //
+    // To verify if insertion is good!
+    //
+//    queryStr = QString( "SELECT * FROM %1" ).arg( m_dbTableOperation.tableName );
+//    query.prepare( queryStr );
+//    query.exec();
 
 //    while( query.next() )
 //    {
@@ -255,6 +315,150 @@ void DBManager::InsertClient(const QString &_name, const QString &_phoneNumber, 
 //    }
 }
 
+QStringList DBManager::SelectClientAll()
+{
+    QString queryStr;
+    QSqlQuery query;
+    queryStr = QString( "SELECT * FROM %1" ).arg( m_dbTableClient.tableName );
+    query.prepare( queryStr );
+    query.exec();
+
+    QStringList res;
+    int numberColomns = query.record().count();
+
+    while( query.next() )
+    {
+        QString tmp;
+
+        for( int i = 0; i < numberColomns - 1; ++i )
+        {
+            tmp += query.value(i).toString() + ":";
+        }
+        tmp += query.value( numberColomns - 1).toString();
+
+        res << tmp;
+    }
+
+    return res;
+}
+
+QStringList DBManager::SelectClientWithName(const QString &_value)
+{
+    QString queryStr;
+    QSqlQuery query;
+    queryStr = QString( "SELECT * FROM %1 WHERE %2 LIKE '%%3%'" ).arg( m_dbTableClient.tableName ).arg(m_dbTableClient.name.name).arg(_value);
+    query.prepare( queryStr );
+    query.exec();
+    qDebug() << queryStr;
+
+    QStringList res;
+    int numberColomns = query.record().count();
+
+    while( query.next() )
+    {
+        QString tmp;
+
+        for( int i = 0; i < numberColomns - 1; ++i )
+        {
+            tmp += query.value(i).toString() + ":";
+        }
+        tmp += query.value( numberColomns - 1).toString();
+
+        res << tmp;
+    }
+
+    return res;
+
+}
+
+QStringList DBManager::SelectClientWithPhoneNumber(const QString &_value)
+{
+    QString queryStr;
+    QSqlQuery query;
+    queryStr = QString( "SELECT * FROM %1 WHERE %2 LIKE '%%3%'" ).arg( m_dbTableClient.tableName ).arg(m_dbTableClient.phoneNumber.name).arg(_value);
+    query.prepare( queryStr );
+    query.exec();
+
+    QStringList res;
+    int numberColomns = query.record().count();
+
+    while( query.next() )
+    {
+        QString tmp;
+
+        for( int i = 0; i < numberColomns - 1; ++i )
+            tmp += query.value(i).toString() + ":";
+
+        tmp += query.value( numberColomns - 1).toString();
+
+        res << tmp;
+    }
+
+    return res;
+}
+
+QStringList DBManager::SelectOperationAll()
+{
+    QString queryStr;
+    QSqlQuery query;
+    queryStr = QString( "SELECT * FROM %1" ).arg( m_dbTableOperation.tableName );
+    query.prepare( queryStr );
+    query.exec();
+
+    QStringList res;
+    int numberColomns = query.record().count();
+
+    while( query.next() )
+    {
+        QString tmp;
+
+        for( int i = 0; i < numberColomns - 1; ++i )
+        {
+            tmp += query.value(i).toString() + ":";
+        }
+        tmp += query.value( numberColomns - 1).toString();
+
+        res << tmp;
+    }
+
+    return res;
+}
+
+QStringList DBManager::SelectOperationBetweenTwoDates(const QString &_firstTime, const QString &_lastTime)
+{
+    qDebug() << __FUNCTION__;
+
+    QString queryStr;
+    QSqlQuery query;
+    queryStr = QString( "SELECT * FROM %1 WHERE %2 >= datetime('%3') AND %4 <= datetime('%5')" )
+            .arg( m_dbTableOperation.tableName )
+            .arg( m_dbTableOperation.dateTime.name )
+            .arg( _firstTime )
+            .arg( m_dbTableOperation.dateTime.name )
+            .arg( _lastTime );
+
+    query.prepare( queryStr );
+    query.exec();
+
+    QStringList res;
+    int numberColomns = query.record().count();
+
+    while( query.next() )
+    {
+        QString tmp;
+
+        for( int i = 0; i < numberColomns - 1; ++i )
+        {
+            tmp += query.value(i).toString() + ":";
+        }
+        tmp += query.value( numberColomns - 1).toString();
+
+        res << tmp;
+    }
+
+    return res;
+}
+
 
 
 void DBManager::InitDbTables()
@@ -265,10 +469,11 @@ void DBManager::InitDbTables()
     m_dbTableClient.name        = DB_TABLE_ITEM( "CLIENT_NAME",         "VARCHAR(20)", "NOT NULL" );
     m_dbTableClient.phoneNumber = DB_TABLE_ITEM( "CLIENT_PHONE_NUMBER", "VARCHAR(15)", "NOT NULL" );
     m_dbTableClient.contactWay  = DB_TABLE_ITEM( "CLIENT_CONTACY_WAY",  "VARCHAR(10)" );
-    m_dbTableClient.hairLength  = DB_TABLE_ITEM( "CLIENT_HAIR_LENGTH",  "VARCHAR(10)" );
-    m_dbTableClient.hairNumber  = DB_TABLE_ITEM( "CLIENT_HAIR_NUMBER",  "VARCHAR(10)" );
-    m_dbTableClient.hairSag     = DB_TABLE_ITEM( "CLIENT_HAIR_SAG",     "VARCHAR(10)" );
-    m_dbTableClient.hairDamage  = DB_TABLE_ITEM( "CLIENT_HAIR_DAMAGE",  "VARCHAR(10)" );
+    m_dbTableClient.info        = DB_TABLE_ITEM( "CLIENT_INFO",  "VARCHAR(100)" );
+//    m_dbTableClient.hairLength  = DB_TABLE_ITEM( "CLIENT_HAIR_LENGTH",  "VARCHAR(10)" );
+//    m_dbTableClient.hairNumber  = DB_TABLE_ITEM( "CLIENT_HAIR_NUMBER",  "VARCHAR(10)" );
+//    m_dbTableClient.hairSag     = DB_TABLE_ITEM( "CLIENT_HAIR_SAG",     "VARCHAR(10)" );
+//    m_dbTableClient.hairDamage  = DB_TABLE_ITEM( "CLIENT_HAIR_DAMAGE",  "VARCHAR(10)" );
 
 
     // operation table
@@ -281,7 +486,7 @@ void DBManager::InitDbTables()
     m_dbTableOperation.color     = DB_TABLE_ITEM( "OP_COLOR",    "VARCHAR(10)" );
     m_dbTableOperation.length    = DB_TABLE_ITEM( "OP_LENGTH",   "VARCHAR(10)" );
     m_dbTableOperation.number    = DB_TABLE_ITEM( "OP_NUMBER",   "VARCHAR(10)" );
-    m_dbTableOperation.style     = DB_TABLE_ITEM( "OP_STYLE",    "VARCHAR(10)" );
+    //m_dbTableOperation.style     = DB_TABLE_ITEM( "OP_STYLE",    "VARCHAR(10)" );
     m_dbTableOperation.price     = DB_TABLE_ITEM( "OP_PRICE",    "INTEGER" );
     m_dbTableOperation.shown     = DB_TABLE_ITEM( "OP_SHOWN",    "INTEGER" );
 
@@ -354,18 +559,23 @@ void DBManager::CreateTables()
     queryStr += QString( "%1 %2 %3, " ).arg( m_dbTableClient.contactWay.name )
             .arg( m_dbTableClient.contactWay.type )
             .arg( m_dbTableClient.contactWay.extra );
-    queryStr += QString( "%1 %2 %3, " ).arg( m_dbTableClient.hairLength.name )
-            .arg( m_dbTableClient.hairLength.type )
-            .arg( m_dbTableClient.hairLength.extra );
-    queryStr += QString( "%1 %2 %3, " ).arg( m_dbTableClient.hairNumber.name )
-            .arg( m_dbTableClient.hairNumber.type )
-            .arg( m_dbTableClient.hairNumber.extra );
-    queryStr += QString( "%1 %2 %3, " ).arg( m_dbTableClient.hairSag.name )
-            .arg( m_dbTableClient.hairSag.type )
-            .arg( m_dbTableClient.hairSag.extra );
-    queryStr += QString( "%1 %2 %3) " ).arg( m_dbTableClient.hairDamage.name )
-            .arg( m_dbTableClient.hairDamage.type )
-            .arg( m_dbTableClient.hairDamage.extra );
+    queryStr += QString( "%1 %2 %3) " ).arg( m_dbTableClient.info.name )
+            .arg( m_dbTableClient.info.type )
+            .arg( m_dbTableClient.info.extra );
+
+
+//    queryStr += QString( "%1 %2 %3, " ).arg( m_dbTableClient.hairLength.name )
+//            .arg( m_dbTableClient.hairLength.type )
+//            .arg( m_dbTableClient.hairLength.extra );
+//    queryStr += QString( "%1 %2 %3, " ).arg( m_dbTableClient.hairNumber.name )
+//            .arg( m_dbTableClient.hairNumber.type )
+//            .arg( m_dbTableClient.hairNumber.extra );
+//    queryStr += QString( "%1 %2 %3, " ).arg( m_dbTableClient.hairSag.name )
+//            .arg( m_dbTableClient.hairSag.type )
+//            .arg( m_dbTableClient.hairSag.extra );
+//    queryStr += QString( "%1 %2 %3) " ).arg( m_dbTableClient.hairDamage.name )
+//            .arg( m_dbTableClient.hairDamage.type )
+//            .arg( m_dbTableClient.hairDamage.extra );
 
     qDebug() << queryStr;
 
@@ -399,9 +609,9 @@ void DBManager::CreateTables()
     queryStr += QString( "%1 %2 %3, " ).arg( m_dbTableOperation.number.name )
             .arg( m_dbTableOperation.number.type )
             .arg( m_dbTableOperation.number.extra );
-    queryStr += QString( "%1 %2 %3, " ).arg( m_dbTableOperation.style.name )
-            .arg( m_dbTableOperation.style.type )
-            .arg( m_dbTableOperation.style.extra );
+//    queryStr += QString( "%1 %2 %3, " ).arg( m_dbTableOperation.style.name )
+//            .arg( m_dbTableOperation.style.type )
+//            .arg( m_dbTableOperation.style.extra );
     queryStr += QString( "%1 %2 %3, " ).arg( m_dbTableOperation.price.name )
             .arg( m_dbTableOperation.price.type )
             .arg( m_dbTableOperation.price.extra );
