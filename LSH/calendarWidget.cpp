@@ -1,11 +1,16 @@
 #include "calendarWidget.h"
 #include "ui_calendarWidget.h"
-#include <QDebug>
+
 #include <QDate>
+#include <QMenu>
+#include <QMessageBox>
 
 #include "my_qlabel.h"
+#include "operationdialog.h"
 
 
+
+#include <QDebug>
 
 CalendarWidget::CalendarWidget(QWidget *parent,DBManager* _dbManager) :
     QWidget(parent),
@@ -23,7 +28,9 @@ CalendarWidget::CalendarWidget(QWidget *parent,DBManager* _dbManager) :
     connect( ui->pushbutton_calendar_next_month, SIGNAL(clicked(bool)), this, SLOT(onCalendarNextMonthButtonPressed()));
     connect( ui->pushbutton_calendar_next_year, SIGNAL(clicked(bool)), this, SLOT(onCalendarNextYearButtonPressed()) );
 
-    connect( ui->pushButton_new, SIGNAL(clicked(bool)), this, SLOT(onReturnToCurrentMonth()));
+
+
+    //connect( ui->pushButton_new, SIGNAL(clicked(bool)), this, SLOT(onReturnToCurrentMonth()));
 
     // Initialize
     Initialize();
@@ -107,6 +114,13 @@ void CalendarWidget::Initialize()
 
     m_calendarSelectedDate = m_calendarToday;
 
+
+    for( int i = 0; i < NUM_TOTAL_CALENDAR_ELEMENT; ++i )
+    {
+        m_calendarBody[i]->setContextMenuPolicy( Qt::CustomContextMenu );
+        connect( m_calendarBody[i], &QTreeWidget::customContextMenuRequested, this, &CalendarWidget::RequestContextFromCalendar );
+    }
+
     // Colorize sundays
     for( int i = 0; i < NUM_TOTAL_CALENDAR_ELEMENT; i = i+7 )
     {
@@ -135,8 +149,15 @@ void CalendarWidget::Initialize()
 //        m_calendarBody[i]->setPalette( palette );
     }
 
-    for( int i = 0; i < NUM_TOTAL_CALENDAR_ELEMENT; ++i )
+    for( int i = 0; i < NUM_TOTAL_CALENDAR_ELEMENT; ++i )        
+    {
         connect( m_calendarBody[i], SIGNAL(buttonReleased()), this, SLOT(onDateClicked()));
+        connect( m_calendarBody[i], SIGNAL(rightButtonReleased()), this, SLOT(onRightButtonClicked()));
+    }
+
+    ui->treeWidget->setContextMenuPolicy( Qt::CustomContextMenu );
+    connect( ui->treeWidget, &QTreeWidget::customContextMenuRequested, this, &CalendarWidget::RequestContextFromSchedule);
+
 
 
     QPixmap pixNextMonth(":/images/arrow_next_month.png");
@@ -146,7 +167,7 @@ void CalendarWidget::Initialize()
     ui->pushbutton_calendar_next_month->setStyleSheet("QPushButton{border: none;outline: none;}");
 
 
-    QPixmap pixNextYear("D:/Dev/Qt/LSH/LSH/arrow_next_year.png");
+    QPixmap pixNextYear(":/images/arrow_next_year.png");
     QIcon iconNextYear( pixNextYear );
     ui->pushbutton_calendar_next_year->setIcon( iconNextYear );
     ui->pushbutton_calendar_next_year->setIconSize( ui->pushbutton_calendar_next_year->iconSize() );
@@ -159,11 +180,50 @@ void CalendarWidget::Initialize()
     ui->pushbutton_calendar_prev_month->setStyleSheet("QPushButton{border: none;outline: none;}");
 
 
-    QPixmap pixPrevYear("D:/Dev/Qt/LSH/LSH/arrow_prev_year.png");
+    QPixmap pixPrevYear(":/images/arrow_prev_year.png");
     QIcon iconPrevYear( pixPrevYear );
     ui->pushbutton_calendar_prev_year->setIcon( iconPrevYear );
     ui->pushbutton_calendar_prev_year->setIconSize( ui->pushbutton_calendar_prev_year->iconSize() );
     ui->pushbutton_calendar_prev_year->setStyleSheet("QPushButton{border: none;outline: none;}");
+
+
+    QPixmap pixHome(":images/home_button.png");
+    QIcon iconHome( pixHome );
+    ui->pushbutton_home->setIcon( iconHome );
+    ui->pushbutton_home->setIconSize( ui->pushbutton_home->iconSize() );
+    ui->pushbutton_home->setStyleSheet("QPushButton{border: none;outline: none;}");
+
+
+    QPixmap pixNew(":images/new_button.png");
+    QIcon iconNew( pixNew );
+    ui->pushButton_new->setIcon( iconNew );
+    ui->pushButton_new->setIconSize( ui->pushButton_new->iconSize() );
+    ui->pushButton_new->setStyleSheet("QPushButton{border: none;outline: none;}");
+
+
+
+
+    ui->treeWidget->setAutoFillBackground( true );
+    ui->treeWidget->setHeaderLabels( QStringList() << QString::fromLocal8Bit("시간")
+                                     << QString::fromLocal8Bit("이름")
+                                     << QString::fromLocal8Bit("컬")
+                                     << QString::fromLocal8Bit("모")
+                                     << QString::fromLocal8Bit("색상")  // 4
+                                     << QString::fromLocal8Bit("길이")
+                                     << QString::fromLocal8Bit("숱")
+                                     << QString::fromLocal8Bit("가격")
+                                     << QString::fromLocal8Bit("리터치")
+                                     );
+
+    ui->treeWidget->header()->resizeSection(0, 90);
+    ui->treeWidget->header()->resizeSection(1, 70);
+    ui->treeWidget->header()->resizeSection(2, 60);
+    ui->treeWidget->header()->resizeSection(3, 60);
+    ui->treeWidget->header()->resizeSection(4, 70);
+    ui->treeWidget->header()->resizeSection(5, 80);
+    ui->treeWidget->header()->resizeSection(6, 60);
+    ui->treeWidget->header()->resizeSection(7, 80);
+    ui->treeWidget->header()->resizeSection(8, 30);
 
 
     UpdateCalendar();
@@ -269,9 +329,35 @@ void CalendarWidget::UpdateCalendar()
 
         QStringList queryResultList = m_dbManager->SelectOperationBetweenTwoDates(firstTime, lastTime);
 
-        foreach( const QString& str, queryResultList )
+        for( int i = 0; i < queryResultList.size(); ++i )
         {
-            qDebug() << str;
+            QString str = queryResultList[i];
+
+            QStringList queryItemList = str.split('|');
+
+            QStringList dateTimeList = queryItemList[2].split(' ');
+
+
+            QStringList dateList = dateTimeList[0].split('-');
+
+            QString timeStr = dateTimeList[1];
+
+
+            int day = dateList[2].toInt();
+
+
+            QString clientID = queryItemList[1];
+
+            QString queryWithID = m_dbManager->SelectClientWithId( clientID );
+
+            QString clientName = queryWithID.split( ':' )[1];
+
+
+            QString text = m_calendarBody[ day + m_calendarDayOffset - 1 ]->text();
+            if( !text.isEmpty() )
+                text += "\n";
+            text += timeStr + "  " + clientName;
+            m_calendarBody[ day + m_calendarDayOffset - 1 ]->setText( text );
         }
     }
 
@@ -342,16 +428,10 @@ void CalendarWidget::UpdateScheduleDate()
 
 
 
-void CalendarWidget::onReturnToCurrentMonth()
-{
-    m_calendarDate  = QDate( m_calendarToday.year(), m_calendarToday.month(), 1 );
-    UpdateCalendar();
-}
-
-
 
 void CalendarWidget::onDateClicked()
 {
+    qDebug() << __FUNCTION__;
 
     QString senderName = QObject::sender()->objectName();
 
@@ -371,6 +451,16 @@ void CalendarWidget::onDateClicked()
     m_calendarSelectedDate = QDate( m_calendarDate.year(), m_calendarDate.month(), day );
 
     UpdateSchedule();
+}
+
+void CalendarWidget::onRightButtonClicked()
+{
+
+
+
+
+
+
 }
 
 void CalendarWidget::ColorizeSelectedDay()
@@ -404,6 +494,8 @@ void CalendarWidget::UpdateScheduleWidget()
     qDebug() << __FUNCTION__;
     UpdateScheduleDate();
 
+    ui->treeWidget->clear();
+
     if( m_dbManager != nullptr )
     {
         QString firstTime = QString( "%1-%2-%3 %4:%5")
@@ -424,8 +516,204 @@ void CalendarWidget::UpdateScheduleWidget()
 
         foreach( const QString& str, queryResultList )
         {
-            qDebug() << str;
+            QStringList itemList = str.split('|');
+
+
+            // time info
+            QStringList dateTimeList = itemList[2].split(' ');
+            QString timeStr = dateTimeList[1];
+
+
+            // client info
+            QString clientID = itemList[1];
+            QString queryWithID = m_dbManager->SelectClientWithId( clientID );
+            QString clientName = queryWithID.split( ':' )[1];
+
+
+
+            // curl
+            QString curlId = itemList[3];
+            QString curlQuery = m_dbManager->SelectSubTableWithId( TABLE_CURL, curlId );
+
+            // type
+            QString typeId = itemList[4];
+            QString typeQuery = m_dbManager->SelectSubTableWithId( TABLE_TYPE, typeId );
+
+            // color
+            QString colorId = itemList[5];
+            QString colorQuery = m_dbManager->SelectSubTableWithId( TABLE_COLOR, colorId );
+
+            //length
+            QString lengthId = itemList[6];
+            QString lengthQuery = m_dbManager->SelectSubTableWithId( TABLE_LENGTH, lengthId );
+
+
+            //number
+            QString numberId = itemList[7];
+            QString numberQuery = m_dbManager->SelectSubTableWithId( TABLE_NUMBER, numberId );
+
+            // price
+            QString price = itemList[8];
+            QString optionStr = itemList[9];
+
+            int option = optionStr.toInt();
+
+            bool bShown = option & 0x00000001;
+            bool bRetouch = option & 0x00000002;
+
+            QTreeWidgetItem * item = new QTreeWidgetItem(ui->treeWidget);
+            item->setText(0, timeStr );
+            item->setText(1, clientName );
+            item->setText(2, curlQuery.split(':')[1] );
+            item->setText(3, typeQuery.split(':')[1] );
+            item->setText(4, colorQuery.split(':')[1] );
+            item->setText(5, lengthQuery.split(':')[1] );
+            item->setText(6, numberQuery.split(':')[1] );
+            item->setText(7, price );
+//            item->setTextAlignment(0, Qt::AlignCenter);
+//            item->setTextAlignment(1, Qt::AlignCenter);
+//            item->setTextAlignment(2, Qt::AlignCenter);
+//            item->setTextAlignment(3, Qt::AlignCenter);
+
+            if( bShown )
+            {
+                for( int i = 0; i < 4; ++i )
+                {
+                    item->setBackgroundColor( i, Qt::black );
+                    item->setTextColor( i, Qt::white );
+                }
+            }
+
+            item->setText(8, bRetouch ? "O" : "X" );
+
+            item->setData(0, Qt::UserRole, itemList[0] );
+
+            ui->treeWidget->addTopLevelItem( item );
+
+            //qDebug() << clientName << timeStr << curlId << price << shown;
+
+
         }
+    }
+
+}
+
+void CalendarWidget::on_pushbutton_home_clicked()
+{
+    m_calendarDate  = QDate( m_calendarToday.year(), m_calendarToday.month(), 1 );
+    UpdateCalendar();
+}
+
+void CalendarWidget::on_pushButton_new_clicked()
+{
+    emit SignalAddOperation( m_calendarSelectedDate );
+}
+
+void CalendarWidget::on_calendar_context_clicked()
+{
+    emit SignalAddOperation( m_calendarContextDate );
+}
+
+void CalendarWidget::RequestContextFromCalendar(const QPoint &pos)
+{
+    qDebug() << __FUNCTION__;
+    QLabel* selectedLabel = static_cast<QLabel*>( sender() );
+
+
+
+    if( selectedLabel != nullptr )
+    {
+        QString senderName = selectedLabel->objectName();
+        int selectedLabelNumber = senderName.right(2).toInt();
+
+        int selectedYear = m_calendarDate.year();
+        int selectedMonth = m_calendarDate.month();
+        int selectedDay = selectedLabelNumber - m_calendarDayOffset + 1;
+
+        m_calendarContextDate = QDate( selectedYear, selectedMonth, selectedDay );
+        qDebug() << m_calendarContextDate;
+
+
+        QAction *newAct = new QAction(QIcon(":/images/new_button.png"), QString::fromLocal8Bit("약속 추가"), selectedLabel );
+        //newAct->setStatusTip(tr("new sth"));
+
+        connect(newAct, SIGNAL(triggered()), this, SLOT(on_calendar_context_clicked()));
+
+        QMenu menu(selectedLabel);
+        menu.addAction(newAct);
+
+        QPoint pt(pos);
+        //menu.exec( selectedLabel->mapFromGlobal(pos) );
+        menu.exec( selectedLabel->mapToGlobal( pos) );
+
+
+    }
+
+
+}
+
+void CalendarWidget::RequestContextFromSchedule(const QPoint &pos)
+{
+    QTreeWidgetItem *item = ui->treeWidget->itemAt( pos );
+
+    if( item != nullptr )
+    {
+        m_operationId = item->data( 0, Qt::UserRole ).toString();
+
+        QAction *editAct = new QAction(QIcon(""), QString::fromLocal8Bit("약속 편집"), this);
+        connect(editAct, SIGNAL(triggered()), this, SLOT( on_Schedule_Edited( ) ));
+
+        QAction *deleteAct = new QAction(QIcon(""), QString::fromLocal8Bit("약속 삭제"), this);
+        connect(deleteAct, SIGNAL(triggered()), this, SLOT( on_Schedule_Deleted() ));
+
+
+
+        QMenu menu(this);
+        menu.addAction(editAct);
+        menu.addAction(deleteAct);
+
+        //QPoint pt(pos);
+        menu.exec( ui->treeWidget->mapToGlobal(pos) );
+    }
+
+}
+
+void CalendarWidget::on_Schedule_Edited()
+{
+    qDebug() << __FUNCTION__;
+
+    OperationDialog diag;
+    diag.SetDbManager( m_dbManager );
+    diag.SetRole( OperationDialog::OPERATION_DIALOG_EDIT );
+    diag.SetOperationId( m_operationId );
+    diag.Init();
+
+    if( diag.exec() == QDialog::Accepted )
+    {
+        UpdateCalendar();
+        UpdateSchedule();
+    }
+}
+
+void CalendarWidget::on_Schedule_Deleted()
+{
+    int res = QMessageBox::warning( this, QString::fromLocal8Bit("위험"), QString::fromLocal8Bit("약속을 정말 정말 삭제하시겠습니까?"), QMessageBox::Ok | QMessageBox::Cancel );
+
+    if( res == QMessageBox::Ok )
+    {
+        qDebug() << "OK";
+
+        if( m_dbManager != nullptr )
+        {
+            m_dbManager->DeleteOperation( m_operationId );
+
+            UpdateCalendar();
+            UpdateSchedule();
+        }
+    }
+    else
+    {
+        qDebug() << "Cancel";
     }
 
 }

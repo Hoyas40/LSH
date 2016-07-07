@@ -98,6 +98,8 @@ void ClientDialog::Init()
 
 
 
+
+
 //    ui->comboBox_length->addItem( " 10 mm ");
 //    ui->comboBox_length->setMinimumSize( ui->comboBox_length->sizeHint() );
 //    ui->comboBox_length->clear();

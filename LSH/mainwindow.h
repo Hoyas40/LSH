@@ -34,6 +34,8 @@ private slots:
     void AddClient();
     void AddOperation();
     void EditDbTables();
+    void SignalAddOperation( const QDate& _date);
+
 
 private:
     Ui::MainWindow *ui;

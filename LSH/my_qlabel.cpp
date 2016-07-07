@@ -24,6 +24,8 @@ bool my_qlabel::event(QEvent *e)
             if( mouseEvent->button() == Qt::LeftButton )
                 emit buttonReleased();
         }
+
+
     }
 
 

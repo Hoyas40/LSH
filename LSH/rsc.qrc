@@ -4,5 +4,7 @@
         <file>arrow_next_year.png</file>
         <file>arrow_prev_month.png</file>
         <file>arrow_prev_year.png</file>
+        <file>home_button.png</file>
+        <file>new_button.png</file>
     </qresource>
 </RCC>

@@ -51,6 +51,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowState( Qt::WindowMaximized );
     setCentralWidget( m_calendarWidget );
 
+    connect( m_calendarWidget, SIGNAL(SignalAddOperation( const QDate&)), this, SLOT(SignalAddOperation(const QDate& )));
+
 }
 
 MainWindow::~MainWindow()
@@ -195,7 +197,7 @@ void MainWindow::AddOperation()
 
     if( diag.exec() == QDialog::Accepted )
     {
-        qDebug() << "accepted";
+        //qDebug() << "accepted";
     }
 
 
@@ -210,3 +212,27 @@ void MainWindow::EditDbTables()
 
     diag.exec();
 }
+
+void MainWindow::SignalAddOperation(const QDate &_date)
+{
+    qDebug() << __FUNCTION__;
+
+    OperationDialog diag;
+    diag.SetDbManager( m_dbManager );
+    diag.SetRole( OperationDialog::OPERATION_DIALOG_NEW );
+    diag.Init();
+    diag.SetDate( _date );
+
+    if( diag.exec() == QDialog::Accepted )
+    {
+        // update calendar widget
+
+        m_calendarWidget->UpdateCalendar();
+        m_calendarWidget->UpdateSchedule();
+    }
+
+
+    qDebug() << _date;
+}
+
+

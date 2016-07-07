@@ -22,6 +22,8 @@ protected:
 
 signals:
     void buttonReleased();
+
+    void rightButtonReleased();
 };
 
 #endif // MY_QLABEL_H

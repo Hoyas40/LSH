@@ -78,6 +78,27 @@ QStringList DBManager::SelectAllSubTable(ENUM_DB_TABLES _table)
 
 }
 
+QString DBManager::SelectSubTableWithId(ENUM_DB_TABLES _table, const QString &_value)
+{
+    QString res;
+
+    QString tableName = GetTableName( _table );
+    if( false == tableName.isEmpty() )
+    {
+        QSqlQuery query;
+        QString queryStr = QString( "SELECT * FROM %1 WHERE ID = '%2'" ).arg( tableName ).arg( _value );
+        query.prepare( queryStr );
+        query.exec();
+
+        while( query.next() )
+        {
+            res = QString( "%1:%2" ).arg( query.value(0).toString() ).arg( query.value(1).toString() );
+        }
+    }
+
+    return res;
+}
+
 void DBManager::InsertSubTable(ENUM_DB_TABLES _table, const QString &_id, const QString & _name )
 {
     qDebug() << __FUNCTION__;
@@ -257,8 +278,15 @@ void DBManager::InsertClient(const QString &_name, const QString &_phoneNumber, 
     //    }
 }
 
-void DBManager::InsertOperation(const QString &_clientID, const QString &_dateTime, const QString &_curl, const QString &_type, const QString &_color,
-                                const QString &_length, const QString &_number, const QString &_price)
+void DBManager::InsertOperation(const QString &_clientID,
+                                const QString &_dateTime,
+                                const QString &_curl,
+                                const QString &_type,
+                                const QString &_color,
+                                const QString &_length,
+                                const QString &_number,
+                                const QString &_price,
+                                const QString& _option )
 {
     QSqlQuery query;
     QString queryStr = QString( "SELECT %1 FROM %2" ).arg( m_dbTableOperation.id.name ).arg( m_dbTableOperation.tableName );
@@ -288,7 +316,7 @@ void DBManager::InsertOperation(const QString &_clientID, const QString &_dateTi
             .arg( _length )
             .arg( _number )
             .arg( _price )
-            .arg( 0 );
+            .arg( _option.toInt() );
 
     qDebug() << queryStr;
 
@@ -373,6 +401,7 @@ QStringList DBManager::SelectClientWithName(const QString &_value)
 
 QStringList DBManager::SelectClientWithPhoneNumber(const QString &_value)
 {
+    qDebug() << __FUNCTION__;
     QString queryStr;
     QSqlQuery query;
     queryStr = QString( "SELECT * FROM %1 WHERE %2 LIKE '%%3%'" ).arg( m_dbTableClient.tableName ).arg(m_dbTableClient.phoneNumber.name).arg(_value);
@@ -392,9 +421,38 @@ QStringList DBManager::SelectClientWithPhoneNumber(const QString &_value)
         tmp += query.value( numberColomns - 1).toString();
 
         res << tmp;
-    }
+    }    
+
 
     return res;
+}
+
+QString DBManager::SelectClientWithId(const QString &_id)
+{
+    qDebug() << __FUNCTION__;
+
+    QString queryStr;
+    QSqlQuery query;
+    queryStr = QString( "SELECT * FROM %1 WHERE %2 IS %3" ).arg( m_dbTableClient.tableName ).arg(m_dbTableClient.id.name).arg(_id);
+    query.prepare( queryStr );
+    query.exec();
+
+    QStringList res;
+    int numberColomns = query.record().count();
+
+    while( query.next() )
+    {
+        QString tmp;
+
+        for( int i = 0; i < numberColomns - 1; ++i )
+            tmp += query.value(i).toString() + ":";
+
+        tmp += query.value( numberColomns - 1).toString();
+
+        res << tmp;
+    }
+
+    return res[0];
 }
 
 QStringList DBManager::SelectOperationAll()
@@ -430,12 +488,14 @@ QStringList DBManager::SelectOperationBetweenTwoDates(const QString &_firstTime,
 
     QString queryStr;
     QSqlQuery query;
-    queryStr = QString( "SELECT * FROM %1 WHERE %2 >= datetime('%3') AND %4 <= datetime('%5')" )
+    queryStr = QString( "SELECT * FROM %1 WHERE %2 >= datetime('%3') AND %4 <= datetime('%5') ORDER BY %6 ASC" )
             .arg( m_dbTableOperation.tableName )
             .arg( m_dbTableOperation.dateTime.name )
             .arg( _firstTime )
             .arg( m_dbTableOperation.dateTime.name )
-            .arg( _lastTime );
+            .arg( _lastTime )
+            .arg( m_dbTableOperation.dateTime.name );
+
 
     query.prepare( queryStr );
     query.exec();
@@ -448,15 +508,122 @@ QStringList DBManager::SelectOperationBetweenTwoDates(const QString &_firstTime,
         QString tmp;
 
         for( int i = 0; i < numberColomns - 1; ++i )
-        {
-            tmp += query.value(i).toString() + ":";
-        }
-        tmp += query.value( numberColomns - 1).toString();
+            tmp += query.value(i).toString() + "|";
 
+        tmp += query.value( numberColomns - 1).toString();
         res << tmp;
     }
 
     return res;
+}
+
+QStringList DBManager::SelectOperationWithClientID(const QString &_value)
+{
+    qDebug() << __FUNCTION__;
+
+    QString queryStr;
+    QSqlQuery query;
+    queryStr = QString( "SELECT * FROM %1 WHERE %2 = '%3' ORDER BY %4 ASC" )
+            .arg( m_dbTableOperation.tableName )
+            .arg( m_dbTableOperation.clientId.name )
+            .arg( _value )
+            .arg( m_dbTableOperation.dateTime.name );
+
+
+    query.prepare( queryStr );
+    query.exec();
+
+    QStringList res;
+    int numberColomns = query.record().count();
+
+    while( query.next() )
+    {
+        QString tmp;
+
+        for( int i = 0; i < numberColomns - 1; ++i )
+            tmp += query.value(i).toString() + "|";
+
+        tmp += query.value( numberColomns - 1).toString();
+        res << tmp;
+    }
+
+    return res;
+}
+
+QString DBManager::SelectOperationWithID(const QString &_value)
+{
+    qDebug() << __FUNCTION__;
+
+    QString queryStr;
+    QSqlQuery query;
+    queryStr = QString( "SELECT * FROM %1 WHERE %2 = '%3' ORDER BY %4 ASC" )
+            .arg( m_dbTableOperation.tableName )
+            .arg( m_dbTableOperation.id.name )
+            .arg( _value )
+            .arg( m_dbTableOperation.dateTime.name );
+
+
+    query.prepare( queryStr );
+    query.exec();
+
+    QString res;
+    int numberColomns = query.record().count();
+
+    while( query.next() )
+    {
+
+        for( int i = 0; i < numberColomns - 1; ++i )
+            res += query.value(i).toString() + "|";
+
+        res += query.value( numberColomns - 1).toString();
+    }
+
+    return res;
+}
+
+void DBManager::UpdateOperation( const QString& _operationID, const QString &_clientID, const QString &_dateTime, const QString &_curl, const QString &_type, const QString &_color, const QString &_length, const QString &_number, const QString &_price, const QString &_option)
+{
+    QSqlQuery query;
+    QString queryStr = QString("UPDATE %1 SET %2 = %3, %4 = '%5', "
+                               "%6 = '%7', %8 = '%9', "
+                               "%10 = '%11', %12 = '%13',"
+                               "%14 = '%15', %16 = %17,"
+                               "%18 = %19 WHERE %20 = %21" )
+            .arg( m_dbTableOperation.tableName )
+            .arg( m_dbTableOperation.clientId.name )
+            .arg( _clientID.toInt() )
+            .arg( m_dbTableOperation.dateTime.name )
+            .arg( _dateTime )
+            .arg( m_dbTableOperation.curl.name ) //6
+            .arg( _curl )
+            .arg( m_dbTableOperation.type.name )
+            .arg( _type )
+            .arg( m_dbTableOperation.color.name ) // 10
+            .arg( _color )
+            .arg( m_dbTableOperation.length.name )
+            .arg( _length )
+            .arg( m_dbTableOperation.number.name ) // 14
+            .arg( _number )
+            .arg( m_dbTableOperation.price.name )
+            .arg( _price )
+            .arg( m_dbTableOperation.shown.name ) // 18
+            .arg( _option.toInt() )
+            .arg( m_dbTableOperation.id.name )  // 20
+            .arg( _operationID );
+
+    query.prepare( queryStr );
+    query.exec();
+}
+
+void DBManager::DeleteOperation(const QString &_operationId)
+{
+    QSqlQuery query;
+    QString queryStr = QString("DELETE FROM %1 WHERE %2 = %3")
+            .arg( m_dbTableOperation.tableName )
+            .arg( m_dbTableOperation.id.name )
+            .arg( _operationId );
+    query.prepare( queryStr );
+    query.exec();
 }
 
 

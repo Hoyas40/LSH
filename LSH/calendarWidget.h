@@ -21,6 +21,9 @@ public:
 
     void SetDbManager( DBManager* _dbManager );
 
+    void UpdateCalendar();
+    void UpdateSchedule();
+
 private:
     Ui::Widget *ui;
 
@@ -31,6 +34,7 @@ private:
     QDate   m_calendarDate;
     QDate   m_calendarToday;
     QDate   m_calendarSelectedDate;
+    QDate   m_calendarContextDate;
     int     m_calendarDayOffset;
 
 private slots:
@@ -38,15 +42,33 @@ private slots:
     void onCalendarNextMonthButtonPressed();
     void onCalendarPrevYearButtonPressed();
     void onCalendarNextYearButtonPressed();
-    void onReturnToCurrentMonth();
+    //void onReturnToCurrentMonth();
 
     void onDateClicked();
+    void onRightButtonClicked();
+
+    void on_pushbutton_home_clicked();
+
+    void on_pushButton_new_clicked();
+
+    void on_calendar_context_clicked();
+
+    void RequestContextFromCalendar( const QPoint & pos );
+
+    void RequestContextFromSchedule( const QPoint & pos );
+
+    void on_Schedule_Edited();
+    void on_Schedule_Deleted();
+
+signals:
+    void SignalAddOperation( const QDate& _date );
+
 private:
     void Initialize();
-    void UpdateCalendar();    
+
     void UpdateMainDate();
 
-    void UpdateSchedule();
+
     void UpdateScheduleDate();
     void ColorizeSelectedDay();
 
@@ -58,6 +80,7 @@ private:
 
 private:
     DBManager * m_dbManager;
+    QString     m_operationId;
 
 };
 

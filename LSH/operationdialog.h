@@ -2,6 +2,7 @@
 #define OPERATIONDIALOG_H
 
 #include <QDialog>
+#include <QTreeWidgetItem>
 
 #include "dbmanager.h"
 
@@ -27,6 +28,10 @@ public:
 
     void Init();
 
+    void SetDate( const QDate& _date );
+
+    void SetOperationId( const QString& _operationId );
+
 private slots:
     void on_pushButton_name_clicked();
 
@@ -45,6 +50,8 @@ private slots:
 
     void on_pushButton_Cancel_clicked();
 
+    void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
+
 private:
     void Init_New();
     void Init_Edit();
@@ -57,6 +64,8 @@ private:
 
     DBManager* m_dbManager;
     OPERATION_ROLE m_role;
+
+    QString m_operationId;
 };
 
 #endif // OPERATIONDIALOG_H

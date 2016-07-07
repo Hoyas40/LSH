@@ -20,6 +20,7 @@ public:
 
 
     QStringList SelectAllSubTable( ENUM_DB_TABLES _table );
+    QString SelectSubTableWithId( ENUM_DB_TABLES _table, const QString& _value );
 
     void InsertSubTable( ENUM_DB_TABLES _table, const QString & _id, const QString & _value );
 
@@ -32,17 +33,42 @@ public:
     static QString GetTagName( ENUM_DB_TABLES _table );
 
     void InsertClient( const QString& _name, const QString& _phoneNumber, const QString& _contactWay, const QString& _info );
-    void InsertOperation( const QString& _clientID, const QString& _dateTime, const QString& _curl, const QString& _type, const QString& _color, const QString& _length, const QString& _number, const QString& _price );
+    void InsertOperation( const QString& _clientID,
+                          const QString& _dateTime,
+                          const QString& _curl,
+                          const QString& _type,
+                          const QString& _color,
+                          const QString& _length,
+                          const QString& _number,
+                          const QString& _price,
+                          const QString& _option // retouche, shown represented by integer
+                          );
 
 
     QStringList SelectClientAll( );
     QStringList SelectClientWithName( const QString& _value );
     QStringList SelectClientWithPhoneNumber( const QString& _value );
+    QString SelectClientWithId( const QString & _id );
 
     QStringList SelectOperationAll();
     QStringList SelectOperationBetweenTwoDates( const QString& _firstTime, const QString& _lastTime );
+    QStringList SelectOperationWithClientID( const QString& _value );
+    QString SelectOperationWithID( const QString& _value );
 
 
+    void UpdateOperation( const QString& _operationID,
+                          const QString& _clientID,
+                          const QString& _dateTime,
+                          const QString& _curl,
+                          const QString& _type,
+                          const QString& _color,
+                          const QString& _length,
+                          const QString& _number,
+                          const QString& _price,
+                          const QString& _option // retouche, shown represented by integer
+                          );
+
+    void DeleteOperation( const QString& _operationId );
 
 private:
     void InitDbTables();
