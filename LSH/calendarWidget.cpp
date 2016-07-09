@@ -29,16 +29,8 @@ CalendarWidget::CalendarWidget(QWidget *parent,DBManager* _dbManager) :
     connect( ui->pushbutton_calendar_next_year, SIGNAL(clicked(bool)), this, SLOT(onCalendarNextYearButtonPressed()) );
 
 
-
-    //connect( ui->pushButton_new, SIGNAL(clicked(bool)), this, SLOT(onReturnToCurrentMonth()));
-
     // Initialize
     Initialize();
-
-
-
-
-
 }
 
 CalendarWidget::~CalendarWidget()
@@ -130,9 +122,6 @@ void CalendarWidget::Initialize()
 
         m_calendarTitle[i]->setAutoFillBackground( true );
         m_calendarTitle[i]->setPalette( palette );
-
-//        m_calendarBody[i]->setAutoFillBackground( true );
-//        m_calendarBody[i]->setPalette( palette );
     }
 
     // Colorize Saturdays
@@ -144,9 +133,6 @@ void CalendarWidget::Initialize()
 
         m_calendarTitle[i]->setAutoFillBackground( true );
         m_calendarTitle[i]->setPalette( palette );
-
-//        m_calendarBody[i]->setAutoFillBackground( true );
-//        m_calendarBody[i]->setPalette( palette );
     }
 
     for( int i = 0; i < NUM_TOTAL_CALENDAR_ELEMENT; ++i )        
@@ -158,49 +144,40 @@ void CalendarWidget::Initialize()
     ui->treeWidget->setContextMenuPolicy( Qt::CustomContextMenu );
     connect( ui->treeWidget, &QTreeWidget::customContextMenuRequested, this, &CalendarWidget::RequestContextFromSchedule);
 
+    ui->pushbutton_calendar_next_month->setStyleSheet(
+                "QPushButton{image: url(:/images/arrow_next_month.png);border:0px;}"
+                "QPushButton:hover{image:url(:/images/arrow_next_month_hover.png); color: lightgray; border:0px}"
+                "QPushButton:pressed{image:url(:/images/arrow_next_month_pressed.png); position:absolute; top: 2px; left: 2px;}");
 
 
-    QPixmap pixNextMonth(":/images/arrow_next_month.png");
-    QIcon iconNextMonth( pixNextMonth );
-    ui->pushbutton_calendar_next_month->setIcon( iconNextMonth );
-    ui->pushbutton_calendar_next_month->setIconSize( ui->pushbutton_calendar_next_month->iconSize() );
-    ui->pushbutton_calendar_next_month->setStyleSheet("QPushButton{border: none;outline: none;}");
+    ui->pushbutton_calendar_next_year->setStyleSheet(
+                "QPushButton{image: url(:/images/arrow_next_year.png);border:0px;}"
+                "QPushButton:hover{image:url(:/images/arrow_next_year_hover.png);border:0px}"
+                "QPushButton:pressed{image:url(:/images/arrow_next_year_pressed.png); position:absolute; top: 2px; left: 2px;}");
 
 
-    QPixmap pixNextYear(":/images/arrow_next_year.png");
-    QIcon iconNextYear( pixNextYear );
-    ui->pushbutton_calendar_next_year->setIcon( iconNextYear );
-    ui->pushbutton_calendar_next_year->setIconSize( ui->pushbutton_calendar_next_year->iconSize() );
-    ui->pushbutton_calendar_next_year->setStyleSheet("QPushButton{border: none;outline: none;}");
-
-    QPixmap pixPrevMonth(":/images/arrow_prev_month.png");
-    QIcon iconPrevMonth( pixPrevMonth );
-    ui->pushbutton_calendar_prev_month->setIcon( iconPrevMonth );
-    ui->pushbutton_calendar_prev_month->setIconSize( ui->pushbutton_calendar_prev_month->iconSize() );
-    ui->pushbutton_calendar_prev_month->setStyleSheet("QPushButton{border: none;outline: none;}");
+    ui->pushbutton_calendar_prev_month->setStyleSheet(
+                "QPushButton{image: url(:/images/arrow_prev_month.png);border:0px;}"
+                "QPushButton:hover{image:url(:/images/arrow_prev_month_hover.png);border:0px}"
+                "QPushButton:pressed{image:url(:/images/arrow_prev_month_pressed.png); position:absolute; top: 2px; left: 2px;}");
 
 
-    QPixmap pixPrevYear(":/images/arrow_prev_year.png");
-    QIcon iconPrevYear( pixPrevYear );
-    ui->pushbutton_calendar_prev_year->setIcon( iconPrevYear );
-    ui->pushbutton_calendar_prev_year->setIconSize( ui->pushbutton_calendar_prev_year->iconSize() );
-    ui->pushbutton_calendar_prev_year->setStyleSheet("QPushButton{border: none;outline: none;}");
+    ui->pushbutton_calendar_prev_year->setStyleSheet(
+                "QPushButton{image: url(:/images/arrow_prev_year.png);border:0px;}"
+                "QPushButton:hover{image:url(:/images/arrow_prev_year_hover.png);border:0px}"
+                "QPushButton:pressed{image:url(:/images/arrow_prev_year_pressed.png); position:absolute; top: 2px; left: 2px;}");
 
 
-    QPixmap pixHome(":images/home_button.png");
-    QIcon iconHome( pixHome );
-    ui->pushbutton_home->setIcon( iconHome );
-    ui->pushbutton_home->setIconSize( ui->pushbutton_home->iconSize() );
-    ui->pushbutton_home->setStyleSheet("QPushButton{border: none;outline: none;}");
+    ui->pushbutton_home->setStyleSheet(
+                "QPushButton{image: url(:/images/home_button.png);border:0px;}"
+                "QPushButton:hover{image:url(:/images/home_button_hover.png);border:0px}"
+                "QPushButton:pressed{image:url(:/images/home_button_pressed.png); position:absolute; top: 2px; left: 2px;}");
 
 
-    QPixmap pixNew(":images/new_button.png");
-    QIcon iconNew( pixNew );
-    ui->pushButton_new->setIcon( iconNew );
-    ui->pushButton_new->setIconSize( ui->pushButton_new->iconSize() );
-    ui->pushButton_new->setStyleSheet("QPushButton{border: none;outline: none;}");
-
-
+    ui->pushButton_new->setStyleSheet(
+                "QPushButton{image: url(:/images/new_button.png);border:0px;}"
+                "QPushButton:hover{image:url(:/images/new_button_hover.png);border:0px}"
+                "QPushButton:pressed{image:url(:/images/new_button_pressed.png); position:absolute; top: 2px; left: 2px;}");
 
 
     ui->treeWidget->setAutoFillBackground( true );
@@ -356,7 +333,7 @@ void CalendarWidget::UpdateCalendar()
             QString text = m_calendarBody[ day + m_calendarDayOffset - 1 ]->text();
             if( !text.isEmpty() )
                 text += "\n";
-            text += timeStr + "  " + clientName;
+            text += " " + timeStr + "  " + clientName;
             m_calendarBody[ day + m_calendarDayOffset - 1 ]->setText( text );
         }
     }
@@ -482,7 +459,7 @@ void CalendarWidget::ColorizeSelectedDay()
     int index = m_calendarSelectedDate.day() + m_calendarDayOffset - 1;
 
     QPalette palette;
-    palette.setColor( QPalette::Window, QColor(130, 228, 130));
+    palette.setColor( QPalette::Window, QColor(225, 190, 231));
     palette.setColor( QPalette::WindowText, Qt::black );
 
     m_calendarBody[ index ]->setAutoFillBackground( true );

@@ -50,7 +50,7 @@ private slots:
 
     void on_pushButton_Cancel_clicked();
 
-    void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
+    void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);    
 
 private:
     void Init_New();

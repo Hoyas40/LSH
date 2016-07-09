@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 
 #include <Qdir>
+#include <QMessageBox>
+
 #include "calendarWidget.h"
 
 #include "dbmanager.h"
@@ -109,12 +111,17 @@ void MainWindow::CreateActions()
     qDebug() << __FUNCTION__;
 
 
+    QIcon icon = QIcon(":/images/save.png");
+
     m_saveCsvAction = new QAction( QString::fromLocal8Bit("CSV 저장하기"), this);
     m_saveCsvAction->setStatusTip( QString::fromLocal8Bit("데이터베이스를 CSV 파일로 저장하기"));
+    m_saveCsvAction->setIcon( QIcon(":/images/save.png") );
+
     connect( m_saveCsvAction, SIGNAL( triggered(bool)), this, SLOT( SaveCSV()) );
 
     m_loadCsvAction = new QAction( QString::fromLocal8Bit("CSV 불러오기"), this);
     m_loadCsvAction->setStatusTip( QString::fromLocal8Bit("CSV 파일 불러와서 데이터 베이스 덮어쓰기"));
+    m_loadCsvAction->setIcon( QIcon(":/images/load.png"));
     connect( m_loadCsvAction, SIGNAL( triggered(bool)), this, SLOT(LoadCSV()) );
 
     m_quitAction = new QAction( QString::fromLocal8Bit("종료"), this);
@@ -124,15 +131,23 @@ void MainWindow::CreateActions()
 
     m_addClientAction = new QAction(QString::fromLocal8Bit("손님 추가"), this);
     m_addClientAction->setStatusTip( QString::fromLocal8Bit("손님 추가하기"));
+    m_addClientAction->setIcon( QIcon(":/images/add_client.png"));
     connect( m_addClientAction, SIGNAL( triggered(bool)), this, SLOT(AddClient()) );
 
     m_addOperationAction = new QAction(QString::fromLocal8Bit("약속 추가"), this);
     m_addOperationAction->setStatusTip( QString::fromLocal8Bit("약속 추가하기"));
+    m_addOperationAction->setIcon( QIcon(":/images/add_operation.png"));
     connect( m_addOperationAction, SIGNAL( triggered(bool)), this, SLOT(AddOperation()) );
 
     m_editDbTablesAction = new QAction(QString::fromLocal8Bit("참조 DB 편집"), this);
     m_editDbTablesAction->setStatusTip( QString::fromLocal8Bit("참조되는 데이터베이스 편집하기"));
+    m_editDbTablesAction->setIcon( QIcon(":/images/editDb.png"));
     connect( m_editDbTablesAction, SIGNAL( triggered(bool)), this, SLOT(EditDbTables()) );
+
+    m_helpAction = new QAction( QString::fromLocal8Bit("About LSH"));
+    m_helpAction->setStatusTip( QString::fromLocal8Bit("LSH 프로그램 소개"));
+    connect( m_helpAction, SIGNAL( triggered(bool)), this, SLOT(About()));
+
 
 }
 
@@ -140,20 +155,47 @@ void MainWindow::CreateMenus()
 {
     qDebug() << __FUNCTION__;
 
+    // file menu
     m_fileMenu = menuBar()->addMenu( QString::fromLocal8Bit("파일") );
     m_fileMenu->addAction( m_saveCsvAction );
     m_fileMenu->addAction( m_loadCsvAction );
-    m_fileMenu->addAction( m_quitAction );
+    m_fileMenu->addAction( m_quitAction );    
 
+    // edit menu
     m_editMenu = menuBar()->addMenu( QString::fromLocal8Bit("편집") );
     m_editMenu->addAction( m_addClientAction );
     m_editMenu->addAction( m_addOperationAction );
-    m_editMenu->addAction( m_editDbTablesAction );
+    m_editMenu->addAction( m_editDbTablesAction );    
+
+    // help menu
+    m_helpMenu = menuBar()->addMenu( QString::fromLocal8Bit("도움") );
+    m_helpMenu->addAction( m_helpAction );
+
+    // font setting
+    menuBar()->setFont( QFont( QString::fromLocal8Bit("맑은 고딕"), 12 ) );
+    m_editMenu->setFont(QFont( QString::fromLocal8Bit("맑은 고딕"), 12 ));
+    m_fileMenu->setFont(QFont( QString::fromLocal8Bit("맑은 고딕"), 12 ));
+    m_helpMenu->setFont(QFont( QString::fromLocal8Bit("맑은 고딕"), 12 ));
 }
 
 void MainWindow::CreateToolbars()
 {
     qDebug() << __FUNCTION__;
+
+    int iconSize = 48;
+    ui->mainToolBar->hide();
+    m_fileToolBar = addToolBar( "File" );
+    m_fileToolBar->addAction( m_saveCsvAction );
+    m_fileToolBar->addAction( m_loadCsvAction );
+    m_fileToolBar->setMinimumHeight( 70 );
+    m_fileToolBar->setIconSize( QSize( iconSize, iconSize));
+
+    m_editToolBar = addToolBar( "Edit" );
+    m_editToolBar->addAction( m_addClientAction );
+    m_editToolBar->addAction( m_addOperationAction );
+    m_editToolBar->addAction( m_editDbTablesAction );
+    m_editToolBar->setMinimumHeight( 70 );
+    m_editToolBar->setIconSize( QSize( iconSize, iconSize));
 
 }
 
@@ -233,6 +275,14 @@ void MainWindow::SignalAddOperation(const QDate &_date)
 
 
     qDebug() << _date;
+}
+
+void MainWindow::About()
+{
+    QMessageBox::about( this, QString::fromLocal8Bit("LSH 프로그램 소개"),
+                        QString::fromLocal8Bit("세상에서 제일 멋진 오빠가\n"
+                                               "사랑하는 동생 선호의 사업 번창을 위해 만듦\n"
+                                               "2016년 7월"));
 }
 
 

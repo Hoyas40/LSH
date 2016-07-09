@@ -402,7 +402,7 @@ void OperationDialog::on_pushButton_name_clicked()
             }
 
         }
-    }    
+    }
 }
 
 void OperationDialog::on_pushButton_phoneNumber_clicked()
@@ -477,14 +477,14 @@ void OperationDialog::on_pushButton_OK_clicked()
     QTreeWidgetItem* widgetItem = ui->treeWidget->currentItem();
     if( widgetItem == nullptr )
     {
-        QMessageBox::warning( this, QString::fromLocal8Bit("에러"), QString::fromLocal8Bit("손님을 선택하세요!") );
+        QMessageBox::warning( this, QString::fromLocal8Bit("에러"), QString::fromLocal8Bit("손님을 선택해라잉!") );
         return;
     }
 
     QString price = ui->lineEdit_price->text();
     if( price.isEmpty() )
     {
-        QMessageBox::warning( this, QString::fromLocal8Bit("에러"), QString::fromLocal8Bit("가격을 입력하세요!") );
+        QMessageBox::warning( this, QString::fromLocal8Bit("????"), QString::fromLocal8Bit("가격 입력은 필수입니닷!") );
         return;
     }
 
@@ -606,3 +606,5 @@ void OperationDialog::on_treeWidget_itemClicked(QTreeWidgetItem *item, int colum
         }
     }
 }
+
+

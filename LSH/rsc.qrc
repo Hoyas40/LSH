@@ -6,5 +6,23 @@
         <file>arrow_prev_year.png</file>
         <file>home_button.png</file>
         <file>new_button.png</file>
+        <file>arrow_next_month_hover.png</file>
+        <file>arrow_next_year_hover.png</file>
+        <file>arrow_prev_month_hover.png</file>
+        <file>arrow_prev_year_hover.png</file>
+        <file>home_button_hover.png</file>
+        <file>new_button_hover.png</file>
+        <file>arrow_next_month_pressed.png</file>
+        <file>arrow_next_year_pressed.png</file>
+        <file>arrow_prev_month_pressed.png</file>
+        <file>arrow_prev_year_pressed.png</file>
+        <file>home_button_pressed.png</file>
+        <file>new_button_pressed.png</file>
+        <file>add_client.png</file>
+        <file>add_operation.png</file>
+        <file>load.png</file>
+        <file>save.png</file>
+        <file>editDb.png</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>

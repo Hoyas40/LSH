@@ -35,6 +35,7 @@ private slots:
     void AddOperation();
     void EditDbTables();
     void SignalAddOperation( const QDate& _date);
+    void About();
 
 
 private:
@@ -51,9 +52,14 @@ private:
     QAction * m_addClientAction;
     QAction * m_addOperationAction;
     QAction * m_editDbTablesAction;
+    QAction * m_helpAction;
 
     QMenu * m_fileMenu;
     QMenu * m_editMenu;
+    QMenu * m_helpMenu;
+
+    QToolBar * m_fileToolBar;
+    QToolBar * m_editToolBar;
 };
 
 #endif // MAINWINDOW_H

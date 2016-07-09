@@ -142,7 +142,7 @@
           </font>
          </property>
          <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
+          <enum>Qt::StrongFocus</enum>
          </property>
          <property name="columnCount">
           <number>2</number>
@@ -168,6 +168,9 @@
          <width>350</width>
          <height>0</height>
         </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
        </property>
        <column>
         <property name="text">
@@ -508,19 +511,18 @@
  <tabstops>
   <tabstop>lineEdit_name</tabstop>
   <tabstop>lineEdit_phoneNumber</tabstop>
+  <tabstop>treeWidget</tabstop>
   <tabstop>dateEdit</tabstop>
   <tabstop>comboBox_time</tabstop>
   <tabstop>comboBox_curl</tabstop>
   <tabstop>comboBox_type</tabstop>
   <tabstop>comboBox_color</tabstop>
+  <tabstop>comboBox_retouch</tabstop>
   <tabstop>comboBox_length</tabstop>
   <tabstop>comboBox_number</tabstop>
   <tabstop>lineEdit_price</tabstop>
   <tabstop>pushButton_OK</tabstop>
   <tabstop>pushButton_Cancel</tabstop>
-  <tabstop>treeWidget</tabstop>
-  <tabstop>pushButton_phoneNumber</tabstop>
-  <tabstop>pushButton_name</tabstop>
  </tabstops>
  <resources/>
  <connections/>
