@@ -178,8 +178,8 @@ void OperationDialog::Init_Edit()
         // client info
         QString clientID = itemList[1];
         QString queryWithID = m_dbManager->SelectClientWithId( clientID );
-        QString clientName = queryWithID.split( ':' )[1];
-        QString phoneNumber = queryWithID.split( ':' )[2];
+        QString clientName = queryWithID.split( '|' )[1];
+        QString phoneNumber = queryWithID.split( '|' )[2];
 
         ui->lineEdit_name->setText( clientName );
         ui->lineEdit_phoneNumber->setText( phoneNumber );
@@ -273,11 +273,11 @@ void OperationDialog::Init_Edit()
 //        QTreeWidgetItem * item = new QTreeWidgetItem(ui->treeWidget);
 //        item->setText(0, timeStr );
 //        item->setText(1, clientName );
-//        item->setText(2, curlQuery.split(':')[1] );
-//        item->setText(3, typeQuery.split(':')[1] );
-//        item->setText(4, colorQuery.split(':')[1] );
-//        item->setText(5, lengthQuery.split(':')[1] );
-//        item->setText(6, numberQuery.split(':')[1] );
+//        item->setText(2, curlQuery.split('|')[1] );
+//        item->setText(3, typeQuery.split('|')[1] );
+//        item->setText(4, colorQuery.split('|')[1] );
+//        item->setText(5, lengthQuery.split('|')[1] );
+//        item->setText(6, numberQuery.split('|')[1] );
 //        item->setText(7, price );
 ////            item->setTextAlignment(0, Qt::AlignCenter);
 ////            item->setTextAlignment(1, Qt::AlignCenter);
@@ -317,7 +317,7 @@ void OperationDialog::LoadDB()
 
         foreach( const QString& str, list )
         {
-            QStringList split = str.split( ':' );
+            QStringList split = str.split( '|' );
 
             if( 2 == split.count() )
                 ui->comboBox_curl->addItem( split[1], split[0] );
@@ -328,7 +328,7 @@ void OperationDialog::LoadDB()
 
         foreach( const QString& str, list )
         {
-            QStringList split = str.split( ':' );
+            QStringList split = str.split( '|' );
 
             if( 2 == split.count() )
                 ui->comboBox_type->addItem( split[1], split[0] );
@@ -339,7 +339,7 @@ void OperationDialog::LoadDB()
 
         foreach( const QString& str, list )
         {
-            QStringList split = str.split( ':' );
+            QStringList split = str.split( '|' );
 
             if( 2 == split.count() )
                 ui->comboBox_color->addItem( split[1], split[0] );
@@ -350,7 +350,7 @@ void OperationDialog::LoadDB()
 
         foreach( const QString& str, list )
         {
-            QStringList split = str.split( ':' );
+            QStringList split = str.split( '|' );
 
             if( 2 == split.count() )
                 ui->comboBox_length->addItem( split[1], split[0] );
@@ -361,7 +361,7 @@ void OperationDialog::LoadDB()
 
         foreach( const QString& str, list )
         {
-            QStringList split = str.split( ':' );
+            QStringList split = str.split( '|' );
 
             if( 2 == split.count() )
                 ui->comboBox_number->addItem( split[1], split[0] );
@@ -390,7 +390,7 @@ void OperationDialog::on_pushButton_name_clicked()
 
         foreach( const QString & str, list )
         {
-            QStringList tmpList = str.split(':');
+            QStringList tmpList = str.split('|');
 
             if( tmpList.size() != 0 )
             {
@@ -427,7 +427,7 @@ void OperationDialog::on_pushButton_phoneNumber_clicked()
 
         foreach( const QString & str, list )
         {
-            QStringList tmpList = str.split(':');
+            QStringList tmpList = str.split('|');
 
             if( tmpList.size() != 0 )
             {
@@ -470,10 +470,6 @@ void OperationDialog::on_lineEdit_phoneNumber_returnPressed()
 
 void OperationDialog::on_pushButton_OK_clicked()
 {
-    //qDebug() << ui->treeWidget->currentItem()->data(0, Qt::UserRole );
-
-    // verify
-
     QTreeWidgetItem* widgetItem = ui->treeWidget->currentItem();
     if( widgetItem == nullptr )
     {
@@ -484,7 +480,7 @@ void OperationDialog::on_pushButton_OK_clicked()
     QString price = ui->lineEdit_price->text();
     if( price.isEmpty() )
     {
-        QMessageBox::warning( this, QString::fromLocal8Bit("????"), QString::fromLocal8Bit("가격 입력은 필수입니닷!") );
+        QMessageBox::warning( this, QString::fromLocal8Bit("에러"), QString::fromLocal8Bit("가격 입력은 필수입니닷!") );
         return;
     }
 
@@ -542,7 +538,6 @@ void OperationDialog::on_treeWidget_itemClicked(QTreeWidgetItem *item, int colum
 
     QString clientID = item->data(0, Qt::UserRole).toString();
 
-    qDebug() << clientID;
 
     if( m_dbManager != nullptr )
     {
@@ -561,7 +556,7 @@ void OperationDialog::on_treeWidget_itemClicked(QTreeWidgetItem *item, int colum
             // client info
             //QString clientID = itemList[1];
             //QString queryWithID = m_dbManager->SelectClientWithId( clientID );
-            //QString clientName = queryWithID.split( ':' )[1];
+            //QString clientName = queryWithID.split( '|' )[1];
 
 
             // curl
@@ -597,8 +592,8 @@ void OperationDialog::on_treeWidget_itemClicked(QTreeWidgetItem *item, int colum
 
             item->setText(0, dateStr );
             item->setText(1, timeStr );
-            item->setText(2, curlQuery.split(':')[1] );
-            item->setText(3, typeQuery.split(':')[1] );
+            item->setText(2, curlQuery.split('|')[1] );
+            item->setText(3, typeQuery.split('|')[1] );
             item->setText(4, bRetouch ? "O" : "X" );
 
 

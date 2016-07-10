@@ -192,19 +192,21 @@ void CalendarWidget::Initialize()
                                      << QString::fromLocal8Bit("리터치")
                                      );
 
-    ui->treeWidget->header()->resizeSection(0, 90);
+    ui->treeWidget->header()->resizeSection(0, 70);
     ui->treeWidget->header()->resizeSection(1, 70);
-    ui->treeWidget->header()->resizeSection(2, 60);
+    ui->treeWidget->header()->resizeSection(2, 50);
     ui->treeWidget->header()->resizeSection(3, 60);
-    ui->treeWidget->header()->resizeSection(4, 70);
-    ui->treeWidget->header()->resizeSection(5, 80);
-    ui->treeWidget->header()->resizeSection(6, 60);
+    ui->treeWidget->header()->resizeSection(4, 60);
+    ui->treeWidget->header()->resizeSection(5, 60);
+    ui->treeWidget->header()->resizeSection(6, 50);
     ui->treeWidget->header()->resizeSection(7, 80);
     ui->treeWidget->header()->resizeSection(8, 30);
 
 
     UpdateCalendar();
     UpdateSchedule();
+
+    EasterEgg();
 }
 
 void CalendarWidget::UpdateCalendar()
@@ -327,7 +329,7 @@ void CalendarWidget::UpdateCalendar()
 
             QString queryWithID = m_dbManager->SelectClientWithId( clientID );
 
-            QString clientName = queryWithID.split( ':' )[1];
+            QString clientName = queryWithID.split( '|' )[1];
 
 
             QString text = m_calendarBody[ day + m_calendarDayOffset - 1 ]->text();
@@ -371,6 +373,21 @@ QString CalendarWidget::GetNameOfDay( int i )
             return QString::fromLocal8Bit( "???" );
             break;
     }
+}
+
+void CalendarWidget::EasterEgg()
+{
+    int month = m_calendarToday.month();
+    int day = m_calendarToday.day();
+
+    if( 4 == month && 27 == day )
+        QMessageBox::information( this, QString::fromLocal8Bit("생일 축하"), QString::fromLocal8Bit("오빠 생일인 거 알고 있지? \n선물~ 선물~"));
+
+    if( 4 == month && 25 == day )
+        QMessageBox::information( this, QString::fromLocal8Bit("생일 축하"), QString::fromLocal8Bit("사랑하는 선호야\n생일 축하한다~"));
+
+    if( 3 == month && 23 == day )
+        QMessageBox::information( this, QString::fromLocal8Bit("생일 축하"), QString::fromLocal8Bit("오늘 새언니 생일이야\n전화 한통 해봐 ㅎ"));
 }
 
 
@@ -504,7 +521,7 @@ void CalendarWidget::UpdateScheduleWidget()
             // client info
             QString clientID = itemList[1];
             QString queryWithID = m_dbManager->SelectClientWithId( clientID );
-            QString clientName = queryWithID.split( ':' )[1];
+            QString clientName = queryWithID.split( '|' )[1];
 
 
 
@@ -541,11 +558,11 @@ void CalendarWidget::UpdateScheduleWidget()
             QTreeWidgetItem * item = new QTreeWidgetItem(ui->treeWidget);
             item->setText(0, timeStr );
             item->setText(1, clientName );
-            item->setText(2, curlQuery.split(':')[1] );
-            item->setText(3, typeQuery.split(':')[1] );
-            item->setText(4, colorQuery.split(':')[1] );
-            item->setText(5, lengthQuery.split(':')[1] );
-            item->setText(6, numberQuery.split(':')[1] );
+            item->setText(2, curlQuery.split('|')[1] );
+            item->setText(3, typeQuery.split('|')[1] );
+            item->setText(4, colorQuery.split('|')[1] );
+            item->setText(5, lengthQuery.split('|')[1] );
+            item->setText(6, numberQuery.split('|')[1] );
             item->setText(7, price );
 //            item->setTextAlignment(0, Qt::AlignCenter);
 //            item->setTextAlignment(1, Qt::AlignCenter);
@@ -644,7 +661,6 @@ void CalendarWidget::RequestContextFromSchedule(const QPoint &pos)
         connect(deleteAct, SIGNAL(triggered()), this, SLOT( on_Schedule_Deleted() ));
 
 
-
         QMenu menu(this);
         menu.addAction(editAct);
         menu.addAction(deleteAct);
@@ -678,8 +694,6 @@ void CalendarWidget::on_Schedule_Deleted()
 
     if( res == QMessageBox::Ok )
     {
-        qDebug() << "OK";
-
         if( m_dbManager != nullptr )
         {
             m_dbManager->DeleteOperation( m_operationId );
@@ -687,10 +701,5 @@ void CalendarWidget::on_Schedule_Deleted()
             UpdateCalendar();
             UpdateSchedule();
         }
-    }
-    else
-    {
-        qDebug() << "Cancel";
-    }
-
+    }  
 }

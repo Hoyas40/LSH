@@ -23,6 +23,11 @@
         <file>load.png</file>
         <file>save.png</file>
         <file>editDb.png</file>
+        <file>calendar_button.jpg</file>
+        <file>client_button.jpg</file>
+        <file>calendar_button.png</file>
+        <file>client_button.png</file>
+        <file>splash.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

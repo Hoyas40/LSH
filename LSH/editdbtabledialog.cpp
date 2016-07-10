@@ -96,7 +96,7 @@ void EditDbTableDialog::UpdateView()
 
         foreach( const QString & str, tableList )
         {
-            QStringList split = str.split(':');
+            QStringList split = str.split('|');
 
             if( split.size() == 2 )
             {
@@ -132,7 +132,7 @@ void EditDbTableDialog::on_pushButton_add_clicked()
         QStringList tableList = m_dbManager->SelectAllSubTable( m_selectedTable );
         foreach( const QString & str, tableList )
         {
-            QStringList split = str.split(':');
+            QStringList split = str.split('|');
 
             if( split.size() == 2 )
             {

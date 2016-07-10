@@ -35,9 +35,26 @@ void ClientDialog::InitNew()
 
 void ClientDialog::InitEdit()
 {
+    qDebug() << __FUNCTION__;
     setWindowTitle( QString::fromLocal8Bit("손님 편집") );
 
     // DB 에서 데이터 읽어오기
+    if( m_dbManager != nullptr )
+    {
+        QString queryWithID = m_dbManager->SelectClientWithId( QString::number(m_clientId ));
+        QStringList list = queryWithID.split( '|' );
+        QString clientName = list[1];
+        QString phoneNumber = list[2];
+        QString contactWay = list[3];
+        QString info = list[4];
+
+        ui->lineEdit_name->setText( clientName );
+        ui->lineEdit_phoneNumber->setText( phoneNumber );
+        int index = ui->comboBox_contact->findData( contactWay );
+        ui->comboBox_contact->setCurrentIndex( index );
+        ui->lineEdit_info->setText( info );
+    }
+
 }
 
 void ClientDialog::LoadDB()
@@ -49,35 +66,12 @@ void ClientDialog::LoadDB()
     {
         QStringList list;
 
-
-//        list = m_dbManager->SelectAllSubTable( TABLE_LENGTH );
-
-//        foreach( const QString& str, list )
-//        {
-//            QStringList split = str.split( ':' );
-
-//            if( 2 == split.count() )
-//                ui->comboBox_length->addItem( split[1], split[0] );
-//        }
-
-//        // 2. number
-//        list = m_dbManager->SelectAllSubTable( TABLE_NUMBER );
-
-//        foreach( const QString& str, list )
-//        {
-//            QStringList split = str.split( ':' );
-
-//            if( 2 == split.count() )
-//                ui->comboBox_number->addItem( split[1], split[0] );
-//        }
-
-
         // 3. contact way
         list = m_dbManager->SelectAllSubTable( TABLE_CONTACT );
 
         foreach( const QString& str, list )
         {
-            QStringList split = str.split( ':' );
+            QStringList split = str.split( '|' );
 
             if( 2 == split.count() )
                 ui->comboBox_contact->addItem( split[1], split[0] );
@@ -88,21 +82,9 @@ void ClientDialog::LoadDB()
 
 void ClientDialog::Init()
 {
-//    ui->lineEdit_name->setText( QString::fromLocal8Bit(" 가나다마 ") );
-//    ui->lineEdit_name->setMinimumSize( ui->lineEdit_name->sizeHint() );
-//    ui->lineEdit_name->clear();
-
     ui->lineEdit_phoneNumber->setText( "  000-0000-0000  ");
     ui->lineEdit_phoneNumber->setMinimumSize( ui->lineEdit_phoneNumber->sizeHint() );
     ui->lineEdit_phoneNumber->clear();
-
-
-
-
-
-//    ui->comboBox_length->addItem( " 10 mm ");
-//    ui->comboBox_length->setMinimumSize( ui->comboBox_length->sizeHint() );
-//    ui->comboBox_length->clear();
 
     LoadDB();
 
@@ -129,15 +111,6 @@ void ClientDialog::on_pushButton_OK_clicked()
     QString contactWay = ui->comboBox_contact->currentData().toString();
     QString info = ui->lineEdit_info->text();
 
-//    QString hairLength = ui->comboBox_length->currentData().toString();
-//    QString hairNumber = ui->comboBox_number->currentData().toString();
-
-//    QString hairSag = ui->lineEdit_sag->text();
-//    QString hairDamage = ui->lineEdit_damage->text();
-
-
-    qDebug() << contactWay <<  info;
-
     if( name.isEmpty() )
     {
         QMessageBox::warning( this, QString::fromLocal8Bit("에러"), QString::fromLocal8Bit("이름이 비어 있습니다") );
@@ -157,15 +130,23 @@ void ClientDialog::on_pushButton_OK_clicked()
         return;
     }
 
-    QStringList checkIfExsitList = m_dbManager->SelectClientWithPhoneNumber( phoneNumber );
-    if( checkIfExsitList.size() != 0 )
+
+
+    if( m_role == CLIENT_DIALOG_NEW )
     {
-        QMessageBox::warning( this, QString::fromLocal8Bit("에러"), QString::fromLocal8Bit("이미 있는 전화 번호입니다.") );
-        return;
+        QStringList checkIfExsitList = m_dbManager->SelectClientWithPhoneNumber( phoneNumber );
+        if( checkIfExsitList.size() != 0 )
+        {
+            QMessageBox::warning( this, QString::fromLocal8Bit("에러"), QString::fromLocal8Bit("이미 있는 전화 번호입니다.") );
+            return;
+        }
+
+        m_dbManager->InsertClient( name, phoneNumber, contactWay, info );
     }
-
-
-    m_dbManager->InsertClient( name, phoneNumber, contactWay, info );
+    else
+    {
+        m_dbManager->UpdateClient( QString::number(m_clientId), name, phoneNumber, contactWay, info );
+    }
 
 
     accept();

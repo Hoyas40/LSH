@@ -32,8 +32,29 @@ public:
 
     static QString GetTagName( ENUM_DB_TABLES _table );
 
-    void InsertClient( const QString& _name, const QString& _phoneNumber, const QString& _contactWay, const QString& _info );
+    void InsertClient( const QString& _name,
+                       const QString& _phoneNumber,
+                       const QString& _contactWay,
+                       const QString& _info );
+
+    void InsertClient( const QString& _id,
+                       const QString& _name,
+                       const QString& _phoneNumber,
+                       const QString& _contactWay,
+                       const QString& _info );
+
     void InsertOperation( const QString& _clientID,
+                          const QString& _dateTime,
+                          const QString& _curl,
+                          const QString& _type,
+                          const QString& _color,
+                          const QString& _length,
+                          const QString& _number,
+                          const QString& _price,
+                          const QString& _option // retouche, shown represented by integer
+                          );
+    void InsertOperation( const QString& _ID,
+                          const QString& _clientID,
                           const QString& _dateTime,
                           const QString& _curl,
                           const QString& _type,
@@ -49,6 +70,11 @@ public:
     QStringList SelectClientWithName( const QString& _value );
     QStringList SelectClientWithPhoneNumber( const QString& _value );
     QString SelectClientWithId( const QString & _id );
+    void UpdateClient( const QString& _id,
+                       const QString& _name,
+                       const QString& _phoneNumber,
+                       const QString& _contactWay,
+                       const QString& _info );
 
     QStringList SelectOperationAll();
     QStringList SelectOperationBetweenTwoDates( const QString& _firstTime, const QString& _lastTime );
@@ -69,6 +95,11 @@ public:
                           );
 
     void DeleteOperation( const QString& _operationId );
+
+    void DeleteClient( const QString& _clientId );
+
+    void DeleteAllTable();
+
 
 private:
     void InitDbTables();

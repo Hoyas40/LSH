@@ -2,15 +2,19 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QActionGroup>
 
+#include <QStackedWidget>
 
 class DBManager;
+class CalendarWidget;
+class ClientWidget;
 
 namespace Ui {
 class MainWindow;
 }
 
-class CalendarWidget;
+
 
 class MainWindow : public QMainWindow
 {
@@ -27,6 +31,10 @@ private:
     void CreateMenus();
     void CreateToolbars();
 
+    void WriteCsvFile( const QStringList & _queryList, const QString & _filename );
+
+    QStringList ReadCsvFile( const QString & _filename );
+
 private slots:
     void SaveCSV();
     void LoadCSV();
@@ -37,13 +45,29 @@ private slots:
     void SignalAddOperation( const QDate& _date);
     void About();
 
+    void ChangeToCalendarWidget();
+
+    void ChangeToClientWidget();
+
 
 private:
     Ui::MainWindow *ui;
 
     DBManager * m_dbManager;
 
+    QString m_dataPath;
+    QString m_dbFilename;
+    QString m_clientCsvFilename;
+    QString m_operationCsvFilename;
+    QString m_curlCsvFilename;
+    QString m_typeCsvFilename;
+    QString m_colorCsvFilename;
+    QString m_lengthCsvFilename;
+    QString m_numberCsvFilename;
+    QString m_contactCsvFilename;
+
     CalendarWidget * m_calendarWidget;
+    ClientWidget * m_clientWidget;
 
     QAction * m_saveCsvAction;
     QAction * m_loadCsvAction;
@@ -54,12 +78,21 @@ private:
     QAction * m_editDbTablesAction;
     QAction * m_helpAction;
 
+    QAction * m_calendarWidgetAction;
+    QAction * m_clientWidgetAction;
+
+    QActionGroup * m_viewActionGroup;
+
     QMenu * m_fileMenu;
     QMenu * m_editMenu;
     QMenu * m_helpMenu;
+    QMenu * m_viewMenu;
 
     QToolBar * m_fileToolBar;
     QToolBar * m_editToolBar;
+    QToolBar * m_viewToolBar;
+
+    QStackedWidget * m_centralWidget;
 };
 
 #endif // MAINWINDOW_H

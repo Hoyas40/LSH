@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     editdbtabledialog.cpp \
     insertsubtabledialog.cpp \
     clientdialog.cpp \
-    operationdialog.cpp
+    operationdialog.cpp \
+    clientwidget.cpp
 
 HEADERS  += mainwindow.h \
     calendarWidget.h \
@@ -30,14 +31,16 @@ HEADERS  += mainwindow.h \
     editdbtabledialog.h \
     insertsubtabledialog.h \
     clientdialog.h \
-    operationdialog.h
+    operationdialog.h \
+    clientwidget.h
 
 FORMS    += mainwindow.ui \
     calendarWidget.ui \
     editdbtabledialog.ui \
     insertsubtabledialog.ui \
     clientdialog.ui \
-    operationdialog.ui
+    operationdialog.ui \
+    clientwidget.ui
 
 RESOURCES += \
     rsc.qrc

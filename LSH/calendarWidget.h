@@ -78,6 +78,9 @@ private:
 
     QString GetNameOfDay( int i );
 
+
+    void EasterEgg();
+
 private:
     DBManager * m_dbManager;
     QString     m_operationId;
