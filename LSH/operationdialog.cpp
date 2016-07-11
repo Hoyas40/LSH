@@ -78,6 +78,8 @@ void OperationDialog::Init()
     ui->lineEdit_phoneNumber->setValidator( new QRegExpValidator( phoneNumberRegExp, this));
 
 
+    QRegExp phonePriceRegExp("[0-9]{0,7}");
+    ui->lineEdit_price->setValidator( new QRegExpValidator( phonePriceRegExp, this));
 
 
     QString temp( "00000000" );
